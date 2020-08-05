@@ -29,8 +29,6 @@
 
 <script>
 
-import axios from 'axios'
-
 export default {
     name: 'Connexion',
     data() {
@@ -42,23 +40,12 @@ export default {
         }
     },
     methods: {
-        poster: function() {
-            axios
-            .post('http://localhost:1337/auth/local', {
-                identifier: this.login,
-                password: this.motDePasse,
-            })
-            .then(response => {
-                // Handle success.
-                console.log('Authentification réussi ;)');
-                this.user = response.data.user;
-                this.token =  response.data.jwt;
-            })
-            .catch(error => {
-                // Handle error.
-                console.log('An error occurred:', error.response);
-            })
-        }
+        poster: function () {
+            this.$store.dispatch('getUser', {
+                login: this.login,
+                mdp : this.motDePasse
+                });
+        },
     }
 }
 
