@@ -1,17 +1,16 @@
 <template>
   <div id="app" class="container-fluid">
-    <header-top class="row" id="header"></header-top>
-    <div class="row">
+    <header-top v-if="connecte" class="row" id="header"></header-top>
+    <div class="row justify-content-md-center" v-if="!connecte">
       <connexion id="connexion"></connexion>
     </div>
-    <div class="row">
+    <div v-if="connecte" class="row">
       <Navbar class="col-12  col-md-3 col-lg-2" id="navbar"></Navbar>
       <div class="col-12 col-md-9 col-lg-10 px-5 pt-3" id="contenu">
         <router-view></router-view>
       </div>
     </div>
     
-
   </div>
 </template>
 
@@ -28,6 +27,11 @@ export default {
     'header-top': Header,
     'connexion': Connexion,
   },
+  data() {
+    return {
+      connecte: true,
+    }
+  }
 }
 </script>
 
@@ -53,7 +57,7 @@ export default {
 }
 
 #connexion {
-  margin-top : 75px;
+  margin-top : 30vh;
 }
 
 @import './assets/variables.css';
