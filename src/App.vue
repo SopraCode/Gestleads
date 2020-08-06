@@ -33,7 +33,6 @@ export default {
     }
   },
   computed: {
-    // VOIR pour actualiser le composant app ou voir pour mettre à jour la valeur
     isAuthentified() {
       return this.$store.state.isAuthentified
     }
