@@ -6,33 +6,33 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: null,
+    isAuthentified: false,
   },
 
   mutations: {
     setUser(state, data) {
       state.user = data;
+    },
+    setIsAuthentified(state, bool) {
+      state.isAuthentified = bool;
     }
   },
 
   actions: {
     getUser(context, obj) {
-      console.log(obj.login);
-      console.log(obj.mdp);
       Axios
       .post('http://localhost:1337/auth/local', {
         identifier: obj.login,
         password: obj.mdp,
       })
       .then(response => {
-          // Handle success.
-          console.log('Authentification réussi ;)');
-          context.commit("setUser", response)
-          
+        console.log('Authentification réussi ;)');
+        context.commit("setUser", response.data)
+        context.commit("setIsAuthentified", true)
       })
       .catch(error => {
-          // Handle error.
-          console.log('Erreur de login mdp', error.response);
+        console.log('Erreur de login mdp', error.response);
       })
     }
   },

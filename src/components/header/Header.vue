@@ -8,7 +8,7 @@
       <input class="form-control mr-sm-2" type="search" placeholder="Recherche" aria-label="Search">
     </form>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="navbar" id="navbarSupportedContent">
       <ul class="navbar-nav pr-5">
         <li class="nav-item">
           <a class="nav-link" href="#"><font-awesome-icon icon="user" size="lg"/></a>

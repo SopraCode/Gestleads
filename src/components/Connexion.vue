@@ -5,8 +5,7 @@
 
         <form
         id="formLogin"
-        method="post"
-        >
+        method="post">
             <div class="form-group">
                 <label for="login">Login</label>
                 <input v-model="login" type="text" id="login" class="form-control">
@@ -19,7 +18,6 @@
         <div class="btn btn-primary" v-on:click="poster" >Se connecter !</div>
         <div class="mt-5" v-if="user">
             <h1>Info utilisateur</h1>
-            <p>Token : {{ token }}</p>
             <p>User: {{ user }}</p>
         </div>
        
@@ -35,8 +33,6 @@ export default {
         return {
             login: null,
             motDePasse: null,
-            token: null,
-            user: null,
         }
     },
     methods: {
@@ -46,6 +42,11 @@ export default {
                 mdp : this.motDePasse
                 });
         },
+    },
+    computed: {
+        user() {
+            return this.$store.state.user
+        }
     }
 }
 

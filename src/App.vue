@@ -1,10 +1,10 @@
 <template>
   <div id="app" class="container-fluid">
-    <header-top v-if="connecte" class="row" id="header"></header-top>
-    <div class="row justify-content-md-center" v-if="!connecte">
+    <header-top v-if="isAuthentified" class="row" id="header"></header-top>
+    <div class="row justify-content-md-center" v-if="!isAuthentified">
       <connexion id="connexion"></connexion>
     </div>
-    <div v-if="connecte" class="row">
+    <div v-if="isAuthentified" class="row">
       <Navbar class="col-12  col-md-3 col-lg-2" id="navbar"></Navbar>
       <div class="col-12 col-md-9 col-lg-10 px-5 pt-3" id="contenu">
         <router-view></router-view>
@@ -29,7 +29,13 @@ export default {
   },
   data() {
     return {
-      connecte: false,
+      
+    }
+  },
+  computed: {
+    // VOIR pour actualiser le composant app ou voir pour mettre à jour la valeur
+    isAuthentified() {
+      return this.$store.state.isAuthentified
     }
   }
 }
