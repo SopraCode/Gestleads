@@ -3,7 +3,11 @@
 
     --dark-color: #364f6b;
     --secondary-color: #3fc1c9;
-    --light-color: #f5f5f5;
+
+    --light-color: #f5f5f5; /* clair clair  */
+    --light-color2: #eeeeee; /* clair fonce  */
+    --light-color3: #dddcdc; /* clair moyen  */
+
     --flash-color: #fc5185;
 
   }

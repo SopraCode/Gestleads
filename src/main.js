@@ -20,14 +20,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(fas, far);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-// AXIOS
-// import axios from 'axios'
-// import VueAxios from 'vue-axios'
-// import store from './store'
-// axios.defaults.baseURL = process.env.VUE_APP_API_URL;
-// Vue.use(VueAxios, axios)
-
-
 Vue.config.productionTip = false
 
 Vue.use(VueRouter)

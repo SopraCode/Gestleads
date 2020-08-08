@@ -7,7 +7,7 @@
     <div v-if="isAuthentified" class="row">
       <Navbar class="col-12  col-md-3 col-lg-2" id="navbar"></Navbar>
       <div class="col-12 col-md-9 col-lg-10 px-5 pt-3" id="contenu">
-        <router-view></router-view>
+        <router-view id="contenu-router"></router-view>
       </div>
     </div>
     
@@ -42,6 +42,7 @@ export default {
 
 <style>
 
+
 #app {
 
 }
@@ -59,6 +60,13 @@ export default {
 }
 #contenu {
   margin-top : 75px;
+  background-color: var(--light-color2);
+}
+
+#contenu-router {
+  background-color: var(--light-color);
+  border: 1px solid var(--light-color3);
+  border-radius: 10px;
 }
 
 #connexion {

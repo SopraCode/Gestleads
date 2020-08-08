@@ -6,7 +6,7 @@
 
         <li><router-link to="/api" exact class="nav-link"><font-awesome-icon icon="code" size="lg"/><span class="ml-2">API</span></router-link></li>
 
-        <li class="nav-link"> <a href="">tretterte</a></li>
+        <li><router-link to="/projets" exact class="nav-link"><font-awesome-icon icon="tasks" size="lg"/><span class="ml-2">Projets</span></router-link></li>
 
         <li class="nav-link"> <a href="">tretterte</a></li>
 
