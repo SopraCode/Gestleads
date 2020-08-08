@@ -34,7 +34,7 @@ export default new Vuex.Store({
       .catch(error => {
         console.log('Erreur de login mdp', error.response);
       })
-    }
+    },
   },
 
   modules: {
