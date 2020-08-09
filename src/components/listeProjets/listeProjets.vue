@@ -4,16 +4,16 @@
         <!-- composant haut (choix du type et les différents filtres) -->
         <div class="row">
             <div class="col-3">
-                <badgeTypeProjet couleur="#3fc1c9" typeDeProjet="En attente" nombreDeProjet="5" icone="tasks"></badgeTypeProjet>
+                <badgeTypeProjet style="background-color: #e8505b;" typeDeProjet="A faire" nombreDeProjet="5" icone="tasks"></badgeTypeProjet>
             </div>
             <div class="col-3">
-                <div id="test-badge" class="p-3">En attente</div>
+                <badgeTypeProjet style="background-color: #e97171;" typeDeProjet="En attente" nombreDeProjet="5" icone="clock"></badgeTypeProjet>
             </div>
             <div class="col-3">
-                <div id="test-badge" class="p-3">A relancer</div>
+                <badgeTypeProjet style="background-color: #3fc1c9;" typeDeProjet="A relancer" nombreDeProjet="5" icone="phone"></badgeTypeProjet>
             </div>
             <div class="col-3">
-                <div id="test-badge" class="p-3">Fini (sur 12 mois)</div>
+                <badgeTypeProjet style="background-color: #318fb5;" typeDeProjet="Gagner/Perdu" nombreDeProjet="5" icone="folder-open"></badgeTypeProjet>
             </div>
             
         </div>

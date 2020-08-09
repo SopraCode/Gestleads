@@ -1,5 +1,5 @@
 <template>
-    <div id="badgeProjet" class="p-3">
+    <div id="badgeProjet" class="p-3" v-bind:style="style">
         <div class="row align-items-center">
             <span id="nombre" class="pl-3"> <h5 class="m-0">{{ nombreDeProjet }}</h5> </span>
             <span id="icone" class="ml-auto pr-3"><font-awesome-icon v-bind:icon="icone" /></span>
@@ -22,14 +22,31 @@ export default {
     methods: {
       
     },
-    props: ['couleur', 'typeDeProjet', 'nombreDeProjet', 'icone']
+    props: {
+        style:{
+            type: String,
+            default: 'background-color: #ffffff;'
+        },
+        typeDeProjet:{
+            type: String,
+            default: 'default'
+        },
+        nombreDeProjet:{
+            type: String,
+            default: '0?'
+        },
+        icone:{
+            type: String,
+            default: 'tasks'
+        },
+    }
 }
 
 </script>
 
 <style scoped>
 #badgeProjet {
-    background-color: var(--secondary-color);
+    
     border-radius: 3px;
     color: var(--light-color);
 }
