@@ -8,10 +8,10 @@
       <input class="form-control mr-sm-2" type="search" placeholder="Recherche" aria-label="Search">
     </form>
 
-    <div class="navbar" id="navbarSupportedContent">
+    <div class="navbar" >
       <ul class="navbar-nav pr-5">
         <li class="nav-item">
-          <a class="nav-link" href="#"><font-awesome-icon icon="user" size="lg"/></a>
+          <a class="nav-link" href="#"><span class="mr-3">{{ userName }}</span><font-awesome-icon icon="user" size="lg"/></a>
         </li>
       </ul>
     </div>
@@ -25,6 +25,12 @@
 <script>
 export default {
   name: 'Header',
+
+  computed: {
+        userName() {
+            return this.$store.state.user.user.username
+        }
+    }
   
 }
 </script>
