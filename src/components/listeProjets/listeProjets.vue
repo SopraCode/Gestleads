@@ -4,23 +4,29 @@
         <!-- composant haut (choix du type et les différents filtres) -->
         <div class="row">
             <div class="col-3">
-                <badgeTypeProjet style="background-color: #e8505b;" typeDeProjet="A faire" nombreDeProjet="5" icone="tasks"></badgeTypeProjet>
+                <router-link to="/projets" exact class="nav-link px-1">
+                    <badgeTypeProjet style="background-color: #b83b5e;" typeDeProjet="A faire" nombreDeProjet="5" icone="tasks"></badgeTypeProjet>
+                </router-link>
             </div>
             <div class="col-3">
-                <badgeTypeProjet style="background-color: #e97171;" typeDeProjet="En attente" nombreDeProjet="5" icone="clock"></badgeTypeProjet>
+                <router-link to="/projets" exact class="nav-link px-1">
+                    <badgeTypeProjet style="background-color: #e97171;" typeDeProjet="En attente" nombreDeProjet="8" icone="clock"></badgeTypeProjet>
+                </router-link>
             </div>
             <div class="col-3">
-                <badgeTypeProjet style="background-color: #3fc1c9;" typeDeProjet="A relancer" nombreDeProjet="5" icone="phone"></badgeTypeProjet>
+                <router-link to="/projets" exact class="nav-link px-1">
+                    <badgeTypeProjet style="background-color: #3fc1c9;" typeDeProjet="A relancer" nombreDeProjet="3" icone="phone"></badgeTypeProjet>
+                </router-link>
             </div>
             <div class="col-3">
-                <badgeTypeProjet style="background-color: #318fb5;" typeDeProjet="Gagner/Perdu" nombreDeProjet="5" icone="folder-open"></badgeTypeProjet>
+                <router-link to="/projets" exact class="nav-link px-1">
+                    <badgeTypeProjet style="background-color: #318fb5;" typeDeProjet="Solder" nombreDeProjet="65" icone="folder-open"></badgeTypeProjet>
+                </router-link>
             </div>
-            
         </div>
+
         <!-- composant tableau  -->
 
-
-        
         <div id="texte">
             <h1>Test API</h1>
             <div>
