@@ -1,14 +1,11 @@
 <template>
     <div id="badgeProjet" class="p-2" v-bind:style="addStyle">
         <div class="row align-items-center">
-            <span id="nombre" class="pl-3"> <h5 class="m-0">{{ rechercheReqEtat }}</h5> </span>
+            <span id="nombre" class="pl-3"> <h5 class="m-0">{{ nombreProjets }}</h5> </span>
             <span id="icone" class="ml-auto pr-3"><font-awesome-icon v-bind:icon="icone" /></span>
         </div>
         <div class="row mb-1 pt-2 justify-content-center" id="typeProjet">
             <h4>{{ typeDeProjet }}</h4>
-        </div>
-        <div>
-            {{ test }}
         </div>
     </div>
 </template>
@@ -20,7 +17,7 @@ export default {
     name: 'badgeTypeProjet',
     data() {
         return {
-            test: null,
+            nombreProjets: null,
         }
     },
     methods: {
@@ -58,7 +55,7 @@ export default {
             },
         })
         .then(reponse => {
-            this.test = reponse.data
+            this.nombreProjets = reponse.data
         })
     }
 }

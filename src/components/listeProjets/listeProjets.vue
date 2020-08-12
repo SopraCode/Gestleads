@@ -20,7 +20,7 @@
             </div>
             <div class="col-3">
                 <router-link to="/projets" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" rechercheReqEtat="solder" icone="folder-open"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" rechercheReqEtat="perdu&etatprojet.etat=gagne" icone="folder-open"></badgeTypeProjet>
                 </router-link>
             </div>
         </div>
