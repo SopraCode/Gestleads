@@ -1,40 +1,60 @@
 <template>
     <div id="contenu-projet">
 
-        <!-- composant haut (choix du type et les différents filtres) -->
+        <!-- composant : choix du type de projet -->
         <div class="row">
             <div class="col-3">
                 <router-link to="/projets" exact class="nav-link px-1">
-                    <badgeTypeProjet style="background-color: #b83b5e;" typeDeProjet="A faire" nombreDeProjet="5" icone="tasks"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #b83b5e;" typeDeProjet="A faire" rechercheReqEtat="a_faire" icone="tasks"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
                 <router-link to="/projets" exact class="nav-link px-1">
-                    <badgeTypeProjet style="background-color: #e97171;" typeDeProjet="En attente" nombreDeProjet="8" icone="clock"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #e97171;" typeDeProjet="En attente" rechercheReqEtat="en_attente" icone="clock"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
                 <router-link to="/projets" exact class="nav-link px-1">
-                    <badgeTypeProjet style="background-color: #3fc1c9;" typeDeProjet="A relancer" nombreDeProjet="3" icone="phone"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #3fc1c9;" typeDeProjet="A relancer" rechercheReqEtat="a_relancer" icone="phone"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
                 <router-link to="/projets" exact class="nav-link px-1">
-                    <badgeTypeProjet style="background-color: #318fb5;" typeDeProjet="Solder" nombreDeProjet="65" icone="folder-open"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" rechercheReqEtat="solder" icone="folder-open"></badgeTypeProjet>
                 </router-link>
             </div>
         </div>
 
         <!-- composant tableau  -->
 
-        <div id="texte">
-            <h1>Test API</h1>
+        <div id="tableau" class="row mx-1 my-3 p-3">
+            <h1>Tableau</h1>
             <div>
-                <h2>Projets</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th v-for="projet in projets" :key="projet.id">
+                            {{ projet.id }}
+                        </th>
+                        <!-- <th v-for="key in columns"
+                        @click="sortBy(key)"
+                        :class="{ active: sortKey == key }">
+                        {{ key | capitalize }}
+                        <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+                        </span>
+                        </th> -->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- <tr v-for="entry in filteredHeroes">
+                        <td v-for="key in columns">
+                        {{entry[key]}}
+                        </td>
+                    </tr> -->
+                    </tbody>
+                </table>
                 <br>
-                <p>
-                    {{ projets }}
-                </p>
+                <p>{{ projets }}</p>
 
 
             </div>
@@ -65,14 +85,13 @@ export default {
     },
     mounted() {
         axios
-        .get('http://localhost:1337/projets', {
+        .get(this.$store.state.baseUrlApi+'projets', {
             headers: {
                 Authorization:
                 `Bearer ${this.$store.state.user.jwt}`,
             },
         })
         .then(reponse => {
-            console.log('log projets reussi')
             this.projets = reponse.data
         })
     },
@@ -82,8 +101,8 @@ export default {
 </script>
 
 <style scoped>
-#test-badge {
-    background-color: var(--flash-color);
+#tableau {
+    background-color: #ffffff;
     border-radius: 3px;
 }
 @import '../../assets/variables.css';

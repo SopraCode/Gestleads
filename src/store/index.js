@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     user: null,
     isAuthentified: false,
+    baseUrlApi: 'http://localhost:1337/',
   },
 
   mutations: {
@@ -21,8 +22,9 @@ export default new Vuex.Store({
 
   actions: {
     getUser(context, obj) {
+      let urlAuthentification = context.state.baseUrlApi + 'auth/local'
       Axios
-      .post('http://localhost:1337/auth/local', {
+      .post(urlAuthentification, {
         identifier: obj.login,
         password: obj.mdp,
       })
