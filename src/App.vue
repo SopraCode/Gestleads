@@ -36,7 +36,8 @@ export default {
     isAuthentified() {
       return this.$store.state.isAuthentified
     }
-  }
+  },
+  
 }
 </script>
 

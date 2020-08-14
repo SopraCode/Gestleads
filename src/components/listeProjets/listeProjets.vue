@@ -29,37 +29,25 @@
 
         <div id="tableau" class="row mx-1 my-3 p-3">
             <h1>Tableau</h1>
-            <div>
-                <table>
-                    <thead>
-                    <tr>
-                        <th v-for="projet in projets" :key="projet.id">
-                            {{ projet.id }}
-                        </th>
-                        <!-- <th v-for="key in columns"
-                        @click="sortBy(key)"
-                        :class="{ active: sortKey == key }">
-                        {{ key | capitalize }}
-                        <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-                        </span>
-                        </th> -->
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- <tr v-for="entry in filteredHeroes">
-                        <td v-for="key in columns">
-                        {{entry[key]}}
-                        </td>
-                    </tr> -->
-                    </tbody>
-                </table>
-                <br>
-                <p>{{ projets }}</p>
-
-
-            </div>
+            <b-table striped hover responsive :items="items" :fields="enTete">
+                <template v-slot:cell(client)="data">
+                    {{ data.item.client.Nom }}
+                </template>
+                <template v-slot:cell(Chiffre)="data">
+                    {{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumSignificantDigits: 1 }).format(data.item.Chiffre) }}
+                </template>
+                <template v-slot:cell(DateDeRelance)="data">
+                    {{ data.item.DateDeRelance | formatDate}}
+                </template>
+                <template v-slot:cell(type_daffaires)="data">
+                    {{ data.item.type_daffaires }}
+                </template>
+                <template v-slot:cell(created_at)="data">
+                    {{ data.item.created_at | formatDate}}
+                </template>
+            </b-table>
         </div>
-        </div>
+    </div>
     
 
 </template>
@@ -67,6 +55,7 @@
 <script>
 
 import axios from 'axios'
+import moment from 'moment'
 
 import badgeTypeProjet from './badgeTypeProjet'
 
@@ -77,7 +66,46 @@ export default {
     },
     data() {
         return {
-            projets: []
+            items: [],
+            enTete: [
+                {
+                    key: 'Nom',
+                    sortable: true
+                },
+                {
+                    key: 'client',
+                    sortable: true
+                },
+                {
+                    key: 'Priorite',
+                    label: 'Priorité',
+                    sortable: true,
+                },
+                {
+                    key: 'Chiffre',
+                    sortable: true
+                },
+                {
+                    key: 'DateDeRelance',
+                    label: 'Relance',
+                    sortable: true
+                },
+                {
+                    key: 'DescriptifDuProjet',
+                    label: 'Descriptif',
+                    sortable: true
+                },
+                {
+                    key: 'created_at',
+                    label: "Créé le",
+                    sortable: true
+                },
+                {
+                    key: 'type_daffaires',
+                    label: 'Type d affaire',
+                    sortable: true
+                },
+            ]
         }
     },
     methods: {
@@ -92,9 +120,16 @@ export default {
             },
         })
         .then(reponse => {
-            this.projets = reponse.data
+            this.items = reponse.data
+            console.log(reponse.data);
         })
     },
+    filters: {
+        formatDate: function (value) {
+            if (!value) return ''
+                return moment(String(value)).format('DD/MM/YYYY')
+        }
+    }
     
 }
 
