@@ -64,12 +64,6 @@ export default {
   background-color: var(--light-color2);
 }
 
-/* #contenu-router {
-  background-color: var(--light-color);
-  border: 1px solid var(--light-color3);
-  border-radius: 10px;
-} */
-
 #connexion {
   margin-top : 30vh;
 }

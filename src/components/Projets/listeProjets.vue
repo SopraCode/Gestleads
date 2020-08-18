@@ -1,6 +1,5 @@
 <template>
     <div id="contenu-projet">
-
         <!-- composant : choix du type de projet -->
         <div class="row">
             <div class="col-3">
@@ -27,9 +26,35 @@
 
         <!-- composant tableau  -->
 
-        <div id="tableau" class="row mx-1 my-3 p-3">
-            <h1>Tableau</h1>
-            <b-table striped hover responsive :items="items" :fields="enTete">
+        <div id="tableau" class="mx-1 my-3 p-3">
+            <h1>Projets {{ $route.params.type }}</h1>
+
+            <!-- Filtres -->
+            <b-form-group
+                label="Filtres :"
+                label-for="filterInput"
+            >
+                <b-input-group >
+                    <b-form-input
+                    v-model="filter"
+                    type="search"
+                    id="filterInput"
+                    placeholder="Recherche"
+                    ></b-form-input>
+                    <b-button :disabled="!filter" @click="filter = ''" class="ml-3" variant="outline-info">Clear</b-button>
+                </b-input-group>
+            </b-form-group>
+            <b-list-group horizontal="md" class="mb-3 ">
+                <b-list-group-item to="/projets/a_faire" active-class="faire">A faire</b-list-group-item>
+                <b-list-group-item to="/projets/en_attente" active-class="attente">En attente</b-list-group-item>
+                <b-list-group-item to="/projets/a_relancer" active-class="relancer">A relancer</b-list-group-item>
+                <b-list-group-item to="/projets/" active-class="gagne">Solder</b-list-group-item>
+                <b-list-group-item to="/projets/" active-class="perdu">Perdu</b-list-group-item>
+                <b-list-group-item to="/projets/" exact-active-class="tous">Tous</b-list-group-item>
+            </b-list-group>
+
+            <!-- Table -->
+            <b-table striped hover responsive :items="items" :fields="enTete" :filter="filter">
                 <template v-slot:cell(client)="data">
                     {{ data.item.client.Nom }}
                 </template>
@@ -48,8 +73,6 @@
             </b-table>
         </div>
     </div>
-    
-
 </template>
 
 <script>
@@ -105,15 +128,26 @@ export default {
                     label: 'Type d affaire',
                     sortable: true
                 },
-            ]
+            ],
+            filter: null,
         }
     },
     methods: {
       
     },
     mounted() {
+        // type de projet en fonction de l'url
+        let urlProjets
+        if (this.$route.params.type) {
+            urlProjets = this.$store.state.baseUrlApi + 'projets?etatprojet.etat=' + this.$route.params.type
+        }
+        else {
+            urlProjets = this.$store.state.baseUrlApi+'projets'
+        }
+        
+        // Récuperation restapi des projets
         axios
-        .get(this.$store.state.baseUrlApi+'projets', {
+        .get(urlProjets, {
             headers: {
                 Authorization:
                 `Bearer ${this.$store.state.user.jwt}`,
@@ -130,7 +164,6 @@ export default {
                 return moment(String(value)).format('DD/MM/YYYY')
         }
     }
-    
 }
 
 </script>
@@ -139,6 +172,30 @@ export default {
 #tableau {
     background-color: #ffffff;
     border-radius: 3px;
+}
+.faire {
+    background-color: #b83b5e;
+    color: #ffffff;
+}
+.attente {
+    background-color: #e97171;
+    color: #ffffff;
+}
+.relancer {
+    background-color: #3fc1c9;
+    color: #ffffff;
+}
+.gagne {
+    background-color: #b36d12;
+    color: #ffffff;
+}
+.tous {
+    background-color: #318fb5;
+    color: #ffffff;
+}
+.perdu{
+    background-color: #3c4472;
+    color: #ffffff;
 }
 @import '../../assets/variables.css';
 </style>
