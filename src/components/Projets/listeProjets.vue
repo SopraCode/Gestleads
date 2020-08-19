@@ -3,29 +3,28 @@
         <!-- composant : choix du type de projet -->
         <div class="row">
             <div class="col-3">
-                <router-link to="/projets" exact class="nav-link px-1">
+                <router-link to="/projets/a_faire" exact class="nav-link px-1">
                     <badgeTypeProjet addStyle="background-color: #b83b5e;" typeDeProjet="A faire" rechercheReqEtat="a_faire" icone="tasks"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
-                <router-link to="/projets" exact class="nav-link px-1">
+                <router-link to="/projets/en_attente" exact class="nav-link px-1">
                     <badgeTypeProjet addStyle="background-color: #e97171;" typeDeProjet="En attente" rechercheReqEtat="en_attente" icone="clock"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
-                <router-link to="/projets" exact class="nav-link px-1">
+                <router-link to="/projets/a_relancer" exact class="nav-link px-1">
                     <badgeTypeProjet addStyle="background-color: #3fc1c9;" typeDeProjet="A relancer" rechercheReqEtat="a_relancer" icone="phone"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
-                <router-link to="/projets" exact class="nav-link px-1">
+                <router-link to="/projets/gagne" exact class="nav-link px-1">
                     <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" rechercheReqEtat="perdu&etatprojet.etat=gagne" icone="folder-open"></badgeTypeProjet>
                 </router-link>
             </div>
         </div>
 
         <!-- composant tableau  -->
-
         <div id="tableau" class="mx-1 my-3 p-3">
             <h1>Projets {{ $route.params.type }}</h1>
 
@@ -48,8 +47,8 @@
                 <b-list-group-item to="/projets/a_faire" active-class="faire">A faire</b-list-group-item>
                 <b-list-group-item to="/projets/en_attente" active-class="attente">En attente</b-list-group-item>
                 <b-list-group-item to="/projets/a_relancer" active-class="relancer">A relancer</b-list-group-item>
-                <b-list-group-item to="/projets/" active-class="gagne">Solder</b-list-group-item>
-                <b-list-group-item to="/projets/" active-class="perdu">Perdu</b-list-group-item>
+                <b-list-group-item to="/projets/gagne" active-class="gagne">Gagné</b-list-group-item>
+                <b-list-group-item to="/projets/perdu" active-class="perdu">Perdu</b-list-group-item>
                 <b-list-group-item to="/projets/" exact-active-class="tous">Tous</b-list-group-item>
             </b-list-group>
 
@@ -65,7 +64,9 @@
                     {{ data.item.DateDeRelance | formatDate}}
                 </template>
                 <template v-slot:cell(type_daffaires)="data">
-                    {{ data.item.type_daffaires }}
+                    <div v-for="type in data.item.type_daffaires" :key="type.id">
+                        {{ type.Domaine }}
+                    </div>
                 </template>
                 <template v-slot:cell(created_at)="data">
                     {{ data.item.created_at | formatDate}}
@@ -133,31 +134,41 @@ export default {
         }
     },
     methods: {
-      
+        majProjets : function () {
+            // type de projet en fonction de l'url
+            let urlProjets
+            if (this.$route.params.type) {
+                urlProjets = this.$store.state.baseUrlApi + 'projets?etatprojet.etat=' + this.$route.params.type
+            }
+            else {
+                urlProjets = this.$store.state.baseUrlApi+'projets'
+            }
+            console.log('url projet :' + urlProjets);
+            // Récuperation restapi des projets
+            axios
+            .get(urlProjets, {
+                headers: {
+                    Authorization:
+                    `Bearer ${this.$store.state.user.jwt}`,
+                },
+            })
+            .then(reponse => {
+                this.items = reponse.data
+                console.log(reponse.data)
+            })
+            }
     },
     mounted() {
-        // type de projet en fonction de l'url
-        let urlProjets
-        if (this.$route.params.type) {
-            urlProjets = this.$store.state.baseUrlApi + 'projets?etatprojet.etat=' + this.$route.params.type
-        }
-        else {
-            urlProjets = this.$store.state.baseUrlApi+'projets'
-        }
-        
-        // Récuperation restapi des projets
-        axios
-        .get(urlProjets, {
-            headers: {
-                Authorization:
-                `Bearer ${this.$store.state.user.jwt}`,
-            },
-        })
-        .then(reponse => {
-            this.items = reponse.data
-            console.log(reponse.data);
-        })
+        this.majProjets();
     },
+    watch: {
+        '$route' (to, from) {
+            // réagir au changement de route..
+            console.log(to + from);
+            this.majProjets()
+        }
+    },
+
     filters: {
         formatDate: function (value) {
             if (!value) return ''
@@ -186,7 +197,7 @@ export default {
     color: #ffffff;
 }
 .gagne {
-    background-color: #b36d12;
+    background-color: #0b8b0b;
     color: #ffffff;
 }
 .tous {
@@ -196,6 +207,24 @@ export default {
 .perdu{
     background-color: #3c4472;
     color: #ffffff;
+}
+.faire:hover {
+    opacity: 0.8;
+}
+.attente:hover {
+    opacity: 0.8;
+}
+.relancer:hover {
+    opacity: 0.8;
+}
+.gagne:hover {
+    opacity: 0.8;
+}
+.tous:hover {
+    opacity: 0.8;
+}
+.perdu:hover {
+    opacity: 0.8;
 }
 @import '../../assets/variables.css';
 </style>
