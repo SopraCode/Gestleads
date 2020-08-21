@@ -26,7 +26,13 @@
 
         <!-- composant tableau  -->
         <div id="tableau" class="mx-1 my-3 p-3">
-            <h1>Projets {{ $route.params.type }}</h1>
+            <div class="d-flex justify-content-between align-items-center">
+                <div><h1>Projets</h1></div>
+                <div class="ml-auto mr-3">
+                    <b-button variant="outline-info"><font-awesome-icon icon="plus-circle" size="lg"/> Ajouter</b-button>
+                </div>
+            </div>
+            
 
             <!-- Filtres -->
             <b-form-group
@@ -44,12 +50,29 @@
                 </b-input-group>
             </b-form-group>
             <b-list-group horizontal="md" class="mb-3 ">
-                <b-list-group-item to="/projets/a_faire" active-class="faire">A faire</b-list-group-item>
-                <b-list-group-item to="/projets/en_attente" active-class="attente">En attente</b-list-group-item>
-                <b-list-group-item to="/projets/a_relancer" active-class="relancer">A relancer</b-list-group-item>
-                <b-list-group-item to="/projets/gagne" active-class="gagne">Gagné</b-list-group-item>
-                <b-list-group-item to="/projets/perdu" active-class="perdu">Perdu</b-list-group-item>
-                <b-list-group-item to="/projets/" exact-active-class="tous">Tous</b-list-group-item>
+                <b-list-group-item class="d-flex justify-content-between align-items-center" to="/projets/" exact-active-class="tous">
+                    Tous
+                </b-list-group-item>
+                <b-list-group-item to="/projets/a_faire" active-class="faire" class="d-flex justify-content-between align-items-center">
+                    A faire
+                    <b-badge variant="info" pill>{{ nombreTypeProjet['a_faire'] }}</b-badge>
+                </b-list-group-item>
+                <b-list-group-item to="/projets/en_attente" active-class="attente" class="d-flex justify-content-between align-items-center">
+                    En attente
+                    <b-badge variant="info" pill>{{ nombreTypeProjet['en_attente'] }}</b-badge>
+                </b-list-group-item>
+                <b-list-group-item to="/projets/a_relancer" active-class="relancer" class="d-flex justify-content-between align-items-center">
+                    A relancer
+                    <b-badge variant="info" pill>{{ nombreTypeProjet['a_relancer'] }}</b-badge>
+                </b-list-group-item>
+                <b-list-group-item to="/projets/gagne" active-class="gagne" class="d-flex justify-content-between align-items-center">
+                    Gagné
+                    <b-badge variant="info" pill>{{ nombreTypeProjet['gagne'] }}</b-badge>
+                </b-list-group-item>
+                <b-list-group-item to="/projets/perdu" active-class="perdu" class="d-flex justify-content-between align-items-center">
+                    Perdu
+                    <b-badge variant="info" pill>{{ nombreTypeProjet['perdu'] }}</b-badge>
+                </b-list-group-item>
             </b-list-group>
 
             <!-- Table -->
@@ -85,9 +108,11 @@ import badgeTypeProjet from './badgeTypeProjet'
 
 export default {
     name: 'Projets',
+
     components : {
         'badgeTypeProjet': badgeTypeProjet,
     },
+
     data() {
         return {
             items: [],
@@ -131,8 +156,10 @@ export default {
                 },
             ],
             filter: null,
+            nombreTypeProjet: null,
         }
     },
+
     methods: {
         majProjets : function () {
             // type de projet en fonction de l'url
@@ -156,17 +183,39 @@ export default {
                 this.items = reponse.data
                 console.log(reponse.data)
             })
+        },
+        reqNombreProjets : function() {
+            const typesProjet = ['a_faire', 'en_attente', 'a_relancer', 'gagne', 'perdu']
+            let tableauNombreProjet = {}
+            for (let type of typesProjet) {
+                // constitution de l'url pour la requete
+                const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${type}`
+                axios
+                .get(countEtatProjetUrl, {
+                    headers: {
+                        Authorization:
+                        `Bearer ${this.$store.state.user.jwt}`,
+                    },
+                })
+                .then(reponse => {
+                    tableauNombreProjet[type] = reponse.data
+                })
             }
+            this.nombreTypeProjet = tableauNombreProjet
+        },
     },
-    mounted() {
+
+    created () {
+        this.reqNombreProjets();
         this.majProjets();
     },
+    
     watch: {
         '$route' (to, from) {
             // réagir au changement de route..
             console.log(to + from);
             this.majProjets()
-        }
+        },
     },
 
     filters: {
