@@ -22,14 +22,28 @@
                 <b-form-input
                     id="input-client"
                     list="listClient"
+                    v-model="form.client"
                 ></b-form-input>
                 <datalist id="listClient">
                     <option v-for="client in option.clients" :key="client.id">{{ client.Nom }}</option>
                 </datalist>
             </b-form-group>
+            <b-form-group
+                id="input-group-descriptif"
+                label="Descriptif du projet:"
+                label-for="input-nom"
+            >
+                <b-form-textarea
+                    id="input-descriptif"
+                    v-model="form.descriptif"
+                    placeholder="Bla bla bla ..."
+                    rows="3"
+                    max-rows="6"
+                ></b-form-textarea>
+            </b-form-group>
 
-            <b-button type="submit" variant="primary" class="m-1">Envoyer</b-button>
-            <b-button type="reset" variant="danger" class="m-1">Reset</b-button>
+            <b-button @click="traitementForm" variant="primary" class="m-1">Envoyer</b-button>
+            <b-button @click="resetForm" variant="danger" class="m-1">Reset</b-button>
         </b-form>
     </div>
 </template>
@@ -47,7 +61,7 @@ export default {
         return {
             form: {
                 nom: '',
-                clients: ['client1', 'client2'],
+                client: '',
                 descriptif: '',
                 etatProjet: '',
                 priotité:'1',
@@ -61,33 +75,18 @@ export default {
             },
             option: {
                 clients: {},
+                etatProjet: {}
             },
             show: true,
         }
     },
     methods: {
-        envoyerForm(evt) {
-            evt.preventDefault()
-            alert(JSON.stringify(this.form))
-
-            // requete
-            axios
-            .post('http://localhost:1337/projets',
-            {
-              Nom: 'testCreation'  
-            }
-            , {
-                headers: {
-                    Authorization:
-                    `Bearer ${this.$store.state.user.jwt}`,
-                },
-            })
-        },
-        resetForm(evt) {
-            evt.preventDefault()
+        resetForm() {
             this.form.nom = ''
+            this.form.client = ''
+            this.form.descriptif = ''
         },
-        getDonnees : function (requete) {
+        getDonnees(requete) {
             let urlRequete = this.$store.state.baseUrlApi + requete
 
             return axios
@@ -101,11 +100,47 @@ export default {
                 return reponse.data
             })
         },
+        findClient(nomClient) {
+            return this.getDonnees('clients?Nom=' + nomClient).then(data => {
+                return data
+            })
+        },
+        async traitementForm() {
+            // clients
+            let cli = await this.findClient(this.form.client)
+            this.form.client = [cli[0].id]
+            
+            // Envoyer
+            this.envoyerForm()
+        },
+        async envoyerForm() {
+            // requete
+            axios
+            .post('http://localhost:1337/projets',
+            {
+              Nom: this.form.nom,
+              client: this.form.client,
+              DescriptifDuProjet: this.form.descriptif,
+            }
+            , {
+                headers: {
+                    Authorization:
+                    `Bearer ${this.$store.state.user.jwt}`,
+                },
+            })
+            .then(
+                this.resetForm()
+            )
+
+        },
     },
     created() {
         this.getDonnees('clients').then(data => {
             this.option.clients = data
         })
+        // this.getDonnees('clients').then(data => {
+        //     this.option.clients = data
+        // })
     }
 
 }

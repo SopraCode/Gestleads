@@ -78,7 +78,7 @@
             <!-- Table -->
             <b-table striped hover responsive :items="items" :fields="enTete" :filter="filter">
                 <template v-slot:cell(client)="data">
-                    {{ data.item.client.Nom }}
+                    <div v-if="data.item.client">{{ data.item.client.Nom }}</div>
                 </template>
                 <template v-slot:cell(Chiffre)="data">
                     {{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumSignificantDigits: 1 }).format(data.item.Chiffre) }}
