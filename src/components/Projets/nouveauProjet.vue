@@ -115,57 +115,57 @@
             
             <!-- Type d'affaire -->
 
-            <b-form-group label="Types d'affaire">
-            <b-form-tags v-model="form.typeDaffaire" no-outer-focus>
-                <template v-slot="{ tags, disabled, addTag, removeTag }">
-                <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                    <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                    <b-form-tag
-                        @remove="removeTag(tag)"
-                        :title="tag"
-                        :disabled="disabled"
-                        variant="info"
-                    >{{ tag }}</b-form-tag>
-                    </li>
-                </ul>
+            <b-form-group label="Type d'affaire">
+                <b-form-tags v-model="form.typeDaffaire" no-outer-focus>
+                    <template v-slot="{ tags, disabled, addTag, removeTag }">
+                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                        <b-form-tag
+                            @remove="removeTag(tag)"
+                            :title="tag"
+                            :disabled="disabled"
+                            variant="info"
+                        >{{ tag }}</b-form-tag>
+                        </li>
+                    </ul>
 
-                <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                    <template v-slot:button-content>
-                    <b-icon icon="tag-fill"></b-icon> Choose tags
+                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
+                        <template v-slot:button-content>
+                            Choisir le type d'affaire
+                        </template>
+                        <b-dropdown-form @submit.stop.prevent="() => {}">
+                        <b-form-group
+                            label-for="tag-search-input"
+                            label="Recherche de tag"
+                            label-cols-md="auto"
+                            class="mb-0"
+                            label-size="sm"
+                            :description="searchDesc"
+                            :disabled="disabled"
+                        >
+                            <b-form-input
+                            v-model="option.search"
+                            id="tag-search-input"
+                            type="search"
+                            size="sm"
+                            autocomplete="off"
+                            ></b-form-input>
+                        </b-form-group>
+                        </b-dropdown-form>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-item-button
+                        v-for="option in availableOptions"
+                        :key="option"
+                        @click="affaireOptionTag({ option, addTag })"
+                        >
+                        {{ option }}
+                        </b-dropdown-item-button>
+                        <b-dropdown-text v-if="availableOptions.length === 0">
+                        Type d'affaire introuvable
+                        </b-dropdown-text>
+                    </b-dropdown>
                     </template>
-                    <b-dropdown-form @submit.stop.prevent="() => {}">
-                    <b-form-group
-                        label-for="tag-search-input"
-                        label="Search tags"
-                        label-cols-md="auto"
-                        class="mb-0"
-                        label-size="sm"
-                        :description="searchDesc"
-                        :disabled="disabled"
-                    >
-                        <b-form-input
-                        v-model="search"
-                        id="tag-search-input"
-                        type="search"
-                        size="sm"
-                        autocomplete="off"
-                        ></b-form-input>
-                    </b-form-group>
-                    </b-dropdown-form>
-                    <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item-button
-                    v-for="option in availableOptions"
-                    :key="option"
-                    @click="onOptionClick({ option, addTag })"
-                    >
-                    {{ option }}
-                    </b-dropdown-item-button>
-                    <b-dropdown-text v-if="availableOptions.length === 0">
-                    There are no tags available to select
-                    </b-dropdown-text>
-                </b-dropdown>
-                </template>
-            </b-form-tags>
+                </b-form-tags>
             </b-form-group>
 
 
@@ -198,7 +198,7 @@ export default {
                 numeroDoffre: '',
                 numeroDeCommande: '',
                 marques: null,
-                typeDaffaire: null,
+                typeDaffaire: [],
                 commentaires: null,
                 
             },
@@ -209,7 +209,9 @@ export default {
                     {priorite: 1, texte: '1 - haute'},
                     {priorite: 2, texte: '2 - moyenne'},
                     {priorite: 3, texte: '3 - basse'},
-                ]
+                ],
+                typeDaffaire: ['test1', 'test2'],
+                search: ''
             },
             show: true,
         }
@@ -296,7 +298,10 @@ export default {
             })
 
         },
-        
+        affaireOptionTag({ option, addTag }) {
+            addTag(option)
+            this.search = ''
+        }
     },
     created() {
         this.getDonnees('clients').then(clients => {
@@ -305,10 +310,37 @@ export default {
         this.getDonnees('etatprojets').then(etats => {
             this.option.etatProjet = etats
         })
+        this.getDonnees('type-daffaires').then(types => {
+            let listDomaine = []
+            types.forEach(type => listDomaine.push(type.Domaine))
+            this.option.typeDaffaire = listDomaine
+            console.log(this.option.typeDaffaire);
+        })
     },
     computed: {
         validationNomProjet() {
             return this.form.nom.length > 3 && this.form.nom.length < 50
+        },
+        criteria() {
+            // Compute the search criteria
+            return this.option.search.trim().toLowerCase()
+        },
+        availableOptions() {
+            const criteria = this.criteria
+            // Filter out already selected options
+            const options = this.option.typeDaffaire.filter(opt => this.form.typeDaffaire.indexOf(opt) === -1)
+            if (criteria) {
+            // Show only options that match criteria
+            return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
+            }
+            // Show all options available
+            return options
+        },
+        searchDesc() {
+            if (this.criteria && this.availableOptions.length === 0) {
+            return 'There are no tags matching your search criteria'
+            }
+            return ''
         }
     }
 
