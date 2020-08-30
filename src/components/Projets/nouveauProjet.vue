@@ -3,6 +3,7 @@
         <h1>Nouveau projet</h1>
 
         <b-form>
+            <!-- Nom du projet -->
             <b-form-group
                 id="input-group-nom"
                 label="Nom du projet"
@@ -18,6 +19,8 @@
                     Nom de projet obligatoire, doit contenir au moins 4 caractères !!!
                 </b-form-invalid-feedback>
             </b-form-group>
+
+            <!-- Client -->
             <b-form-group
                 id="input-group-client"
                 label="Client"
@@ -27,11 +30,17 @@
                     id="input-client"
                     list="listClient"
                     v-model="form.client"
+                    :state="validationClient"
                 ></b-form-input>
+                <b-form-invalid-feedback :state="validationClient">
+                    Merci de choisir un client !!!
+                </b-form-invalid-feedback>
                 <datalist id="listClient">
                     <option v-for="client in option.clients" :key="client.id">{{ client.Nom }}</option>
                 </datalist>
             </b-form-group>
+
+            <!-- Descriptif -->
             <b-form-group
                 id="input-group-descriptif"
                 label="Descriptif du projet"
@@ -46,6 +55,7 @@
                 ></b-form-textarea>
             </b-form-group>
 
+            <!-- Etat -->
             <b-form-group
                 id="input-group-etat"
                 label="Etat du projet"
@@ -57,9 +67,14 @@
                     :options="option.etatProjet"
                     value-field="id"
                     text-field="etat"
+                    :state="validationEtat"
                 ></b-form-select>
+                <b-form-invalid-feedback :state="validationEtat">
+                    Etat de projet obligatoire !!!
+                </b-form-invalid-feedback>
             </b-form-group>
-
+            
+            <!-- Priorité -->
             <b-form-group
                 id="input-group-priorite"
                 label="Priorité"
@@ -74,6 +89,7 @@
                 ></b-form-select>
             </b-form-group>
 
+            <!-- Date de relance -->
             <b-form-group
                 id="input-group-dateRelance"
                 label="Date de relance"
@@ -87,7 +103,7 @@
                 ></b-form-datepicker>
             </b-form-group>
 
-            <!-- CHIFFRE -->
+            <!-- Chiffre -->
             <b-form-group
                 id="input-group-chiffre"
                 label="Total de l'offre en €"
@@ -96,6 +112,19 @@
                 <b-form-input
                     id="input-chiffre"
                     v-model="form.chiffre"
+                    type="number"
+                ></b-form-input>
+            </b-form-group>
+
+            <!-- Marge -->
+            <b-form-group
+                id="input-group-marge"
+                label="Marge de l'affaire"
+                label-for="input-marge"
+            >
+                <b-form-input
+                    id="input-marge"
+                    v-model="form.marge"
                     type="number"
                 ></b-form-input>
             </b-form-group>
@@ -114,7 +143,6 @@
             </b-form-group>
             
             <!-- Type d'affaire -->
-
             <b-form-group label="Type d'affaire">
                 <b-form-tags v-model="form.typeDaffaire" no-outer-focus>
                     <template v-slot="{ tags, disabled, addTag, removeTag }">
@@ -136,11 +164,11 @@
                         <b-dropdown-form @submit.stop.prevent="() => {}">
                         <b-form-group
                             label-for="tag-search-input"
-                            label="Recherche de tag"
+                            label="Recherche"
                             label-cols-md="auto"
                             class="mb-0"
                             label-size="sm"
-                            :description="searchDesc"
+                            :description="searchDescTypeAffaire"
                             :disabled="disabled"
                         >
                             <b-form-input
@@ -154,13 +182,13 @@
                         </b-dropdown-form>
                         <b-dropdown-divider></b-dropdown-divider>
                         <b-dropdown-item-button
-                        v-for="option in availableOptions"
+                        v-for="option in availableOptionsTypeAffaire"
                         :key="option"
                         @click="affaireOptionTag({ option, addTag })"
                         >
                         {{ option }}
                         </b-dropdown-item-button>
-                        <b-dropdown-text v-if="availableOptions.length === 0">
+                        <b-dropdown-text v-if="availableOptionsTypeAffaire.length === 0">
                         Type d'affaire introuvable
                         </b-dropdown-text>
                     </b-dropdown>
@@ -168,6 +196,20 @@
                 </b-form-tags>
             </b-form-group>
 
+            <!-- Marché -->
+            <b-form-group
+                id="input-group-marche"
+                label="Marché"
+                label-for="checkbox-marche"
+            >  
+                <b-form-checkbox
+                    id="checkbox-marche"
+                    v-model="form.marche"
+                    name="checkbox-marche"
+                    value="true"
+                    unchecked-value="false"
+                ></b-form-checkbox>
+            </b-form-group>
 
 
             <b-button @click="traitementForm" variant="primary" class="m-1">Envoyer</b-button>
@@ -191,8 +233,8 @@ export default {
                 nom: '',
                 client: '',
                 descriptif: '',
-                etatProjet: '',
-                priotité:'3',
+                etatProjet: "",
+                priorite:'3',
                 dateRelance: null,
                 chiffre: null,
                 numeroDoffre: '',
@@ -200,7 +242,8 @@ export default {
                 marques: null,
                 typeDaffaire: [],
                 commentaires: null,
-                
+                marche: false,
+                marge: null,
             },
             option: {
                 clients: {},
@@ -210,10 +253,9 @@ export default {
                     {priorite: 2, texte: '2 - moyenne'},
                     {priorite: 3, texte: '3 - basse'},
                 ],
-                typeDaffaire: ['test1', 'test2'],
+                typeDaffaire: [],
                 search: ''
             },
-            show: true,
         }
     },
     methods: {
@@ -226,6 +268,9 @@ export default {
             this.form.dateRelance = null
             this.form.chiffre = null
             this.form.marques = null
+            this.form.typeDaffaire = []
+            this.form.marche = false
+            this.form.marge = null
         },
         getDonnees(requete) {
             let urlRequete = this.$store.state.baseUrlApi + requete
@@ -249,24 +294,69 @@ export default {
         async traitementForm() {
             let traitementOk = true
 
-            // clients
-            let objClient = await this.findClient(this.form.client)
-            if (objClient.length == 1) {
-                this.form.client = [objClient[0].id]
-            }
-            else {
-                if(confirm("Ce client n'existe pas, voulez-vous le créer ?")) {
-                    alert('Création client')
-                }
+            // Etat projet
+            if (this.form.etatProjet == "" && traitementOk) {
+                alert("Merci de choisir un etat du projet, champ obligatoire")
                 traitementOk = false
             }
 
             // marques : capitalize + remettre en string
-            let marques = this.form.marques.map(marque => marque.charAt(0).toUpperCase() + marque.slice(1))
-            this.form.marques = marques.join(' / ')
-        
+            if (traitementOk) {
+                try {
+                    let marques = this.form.marques.map(marque => marque.charAt(0).toUpperCase() + marque.slice(1))
+                    this.form.marques = marques.join(' / ')
+                } catch(error) {
+                    console.log(error);
+                    alert("Erreur lors du traitement de la marque")
+                }
+            }
+            
+            // Type d'affaire
+            if(traitementOk) {
+                try {
+                    const idTypeDaffaire = this.form.typeDaffaire.map(type => this.option.typeDaffaire.indexOf(type) + 1)
+                    this.form.typeDaffaire = idTypeDaffaire
+                } catch(error) {
+                    console.log(error);
+                    alert("Erreur lors du traitement du type d'affaire")
+                }
+            }
+
+            // clients
+            if (traitementOk) {
+                if (this.form.client.length == 0) {
+                    alert("Merci de choisir un client, champ obligatoire")
+                    traitementOk = false
+                }
+                else {
+                    try {
+                        let objClient = await this.findClient(this.form.client)
+                        if (objClient.length == 1) {
+                            this.form.client = [objClient[0].id]
+                        }
+                        else {
+                            if(confirm("Ce client n'existe pas, voulez-vous le créer ?")) {
+                                alert('Création client')
+                            }
+                            traitementOk = false
+                        }
+                    } catch(error) {
+                        console.log(error);
+                        alert("Erreur lors du traitement du client")
+                    }
+                }
+            }
+            
             // Envoyer
-            if(traitementOk) {this.envoyerForm()}
+            if(traitementOk) {
+                try {
+                    this.envoyerForm()
+                } catch(error) {
+                    console.log(error);
+                    alert("Erreur lors de l'envoie du formulaire")
+                }
+            }
+            else {alert("Erreur de traitement du formulaire")}
                 
         },
         async envoyerForm() {
@@ -282,6 +372,9 @@ export default {
               DateDeRelance: this.form.dateRelance,
               Chiffre: this.form.chiffre,
               Marques: this.form.marques,
+              type_daffaires: this.form.typeDaffaire,
+              marche: this.form.marche,
+              marge: this.form.marge,
             }
             , {
                 headers: {
@@ -293,10 +386,9 @@ export default {
                 this.resetForm()
             )
             .catch(function (error) {
-                // handle error
                 console.log(error);
+                alert("Erreur avec la BDD lors de l'envoi du formulaire")
             })
-
         },
         affaireOptionTag({ option, addTag }) {
             addTag(option)
@@ -314,31 +406,36 @@ export default {
             let listDomaine = []
             types.forEach(type => listDomaine.push(type.Domaine))
             this.option.typeDaffaire = listDomaine
-            console.log(this.option.typeDaffaire);
         })
     },
     computed: {
         validationNomProjet() {
             return this.form.nom.length > 3 && this.form.nom.length < 50
         },
-        criteria() {
-            // Compute the search criteria
+        validationClient() {
+            return this.form.client != ''
+        },
+        validationEtat() {
+            return this.form.etatProjet != ""
+        },
+        critereTypeAffaire() {
+            // Compute the search critereTypeAffaire
             return this.option.search.trim().toLowerCase()
         },
-        availableOptions() {
-            const criteria = this.criteria
+        availableOptionsTypeAffaire() {
+            const critereTypeAffaire = this.critereTypeAffaire
             // Filter out already selected options
             const options = this.option.typeDaffaire.filter(opt => this.form.typeDaffaire.indexOf(opt) === -1)
-            if (criteria) {
-            // Show only options that match criteria
-            return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
+            if (critereTypeAffaire) {
+            // Show only options that match critereTypeAffaire
+            return options.filter(opt => opt.toLowerCase().indexOf(critereTypeAffaire) > -1);
             }
             // Show all options available
             return options
         },
-        searchDesc() {
-            if (this.criteria && this.availableOptions.length === 0) {
-            return 'There are no tags matching your search criteria'
+        searchDescTypeAffaire() {
+            if (this.critereTypeAffaire && this.availableOptionsTypeAffaire.length === 0) {
+            return 'There are no tags matching your search critereTypeAffaire'
             }
             return ''
         }
