@@ -66,7 +66,7 @@
                     v-model="form.etatProjet"
                     :options="option.etatProjet"
                     value-field="id"
-                    text-field="etat"
+                    text-field="etatNonSlug"
                     :state="validationEtat"
                 ></b-form-select>
                 <b-form-invalid-feedback :state="validationEtat">
