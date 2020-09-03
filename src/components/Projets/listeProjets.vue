@@ -29,7 +29,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div><h1>Projets</h1></div>
                 <div class="ml-auto mr-3">
-                    <b-button variant="outline-info" to="/nouveau_projet/"><font-awesome-icon icon="plus-circle" size="lg"/> Ajouter</b-button>
+                    <b-button variant="outline-info" to="/projet"><font-awesome-icon icon="plus-circle" size="lg"/> Ajouter</b-button>
                 </div>
             </div>
             
@@ -151,7 +151,12 @@ export default {
                 },
                 {
                     key: 'type_daffaires',
-                    label: 'Type d affaire',
+                    label: "Type d'affaire",
+                    sortable: true
+                },
+                {
+                    key: 'etatprojet.etatNonSlug',
+                    label: 'Etat',
                     sortable: true
                 },
             ],

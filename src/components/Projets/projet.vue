@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1>Nouveau projet</h1>
+        <h1 v-if="idModificationProjet">Modification du projet</h1>
+        <h1 v-else>Nouveau projet</h1>
 
         <b-form>
             <!-- Nom du projet -->
@@ -137,7 +138,7 @@
             >  
                 <b-form-tags 
                     input-id="tags-marques"
-                    v-model="form.marques"
+                    v-model="form.marquesSansTraitement"
                     placeholder="Ajouter une marque"
                 ></b-form-tags>
             </b-form-group>
@@ -233,12 +234,13 @@ export default {
                 nom: '',
                 client: '',
                 descriptif: '',
-                etatProjet: "",
+                etatProjet: '',
                 priorite:'3',
                 dateRelance: null,
                 chiffre: null,
                 numeroDoffre: '',
                 numeroDeCommande: '',
+                marquesSansTraitement: [],
                 marques: null,
                 typeDaffaire: [],
                 commentaires: null,
@@ -256,6 +258,7 @@ export default {
                 typeDaffaire: [],
                 search: ''
             },
+            idModificationProjet: null,
         }
     },
     methods: {
@@ -268,6 +271,7 @@ export default {
             this.form.dateRelance = null
             this.form.chiffre = null
             this.form.marques = null
+            this.form.marquesSansTraitement = []
             this.form.typeDaffaire = []
             this.form.marche = false
             this.form.marge = null
@@ -303,8 +307,9 @@ export default {
             // marques : capitalize + remettre en string
             if (traitementOk) {
                 try {
-                    let marques = this.form.marques.map(marque => marque.charAt(0).toUpperCase() + marque.slice(1))
+                    let marques = this.form.marquesSansTraitement.map(marque => marque.charAt(0).toUpperCase() + marque.slice(1))
                     this.form.marques = marques.join(' / ')
+                    console.log(this.form.marques);
                 } catch(error) {
                     console.log(error);
                     alert("Erreur lors du traitement de la marque")
@@ -393,7 +398,34 @@ export default {
         affaireOptionTag({ option, addTag }) {
             addTag(option)
             this.search = ''
+        },
+        async chargementModifProjet() {
+            let objProjet = await this.getDonnees(`projets/${this.idModificationProjet}`)
+            this.form.nom = objProjet.Nom
+            this.form.client = objProjet.client.Nom
+            this.form.descriptif = objProjet.DescriptifDuProjet
+            this.form.etatProjet = objProjet.etatprojet.id
+            this.form.priorite = objProjet.Priorite
+            this.form.dateRelance = objProjet.DateDeRelance
+            this.form.chiffre = objProjet.Chiffre
+            this.form.numeroDoffre = objProjet.NumeroDoffre
+            this.form.numeroDeCommande = objProjet.NumeroDeCommande
+            this.form.commentaires = objProjet.commentaires
+            this.form.marche = objProjet.marche
+            this.form.marge = objProjet.marge
+            this.form.marquesSansTraitement =  objProjet.Marques.split('/')
+            this.chargementTypeDaffaire(objProjet.type_daffaires)
+            
+        },
+
+        ////// PROBLEME DE CHARGEMENT DU COMPOSANT
+        chargementTypeDaffaire(listTypeDaffaire) {
+            // if vide à rajouter
+            listTypeDaffaire.forEach(affaire => {
+                this.form.typeDaffaire.push(affaire.Domaine)
+            })
         }
+
     },
     created() {
         this.getDonnees('clients').then(clients => {
@@ -407,6 +439,12 @@ export default {
             types.forEach(type => listDomaine.push(type.Domaine))
             this.option.typeDaffaire = listDomaine
         })
+
+        // Chargement modification d'un projet
+        if (this.$route.params.id) {
+            this.idModificationProjet = this.$route.params.id
+            this.chargementModifProjet()
+        }
     },
     computed: {
         validationNomProjet() {
@@ -438,8 +476,18 @@ export default {
             return 'There are no tags matching your search critereTypeAffaire'
             }
             return ''
-        }
-    }
+        },
+        
+    },
+    watch: {
+        '$route' (to) {
+            // réagir au changement de route..
+            if (to.path == "/projet") {
+                this.resetForm()
+            }
+            
+        },
+    },
 
 }
 </script>
