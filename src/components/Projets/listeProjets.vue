@@ -94,6 +94,22 @@
                 <template v-slot:cell(created_at)="data">
                     {{ data.item.created_at | formatDate}}
                 </template>
+                <template v-slot:cell(lienModification)="data">
+                    <div class="d-flex justify-content-center">
+                        <b-button :to="data.item.lienModification" id="edit">
+                            <font-awesome-icon icon="edit" />
+                        </b-button>
+                    </div>
+                </template>
+                <template v-slot:cell(id)="data">
+                    <div class="d-flex justify-content-center">
+                        <b-button id="delete" @click="supprimerProjet(data)">
+                            <font-awesome-icon icon="trash-alt" />
+                        </b-button>
+                    </div>
+                </template>
+                
+                
             </b-table>
         </div>
     </div>
@@ -159,6 +175,16 @@ export default {
                     label: 'Etat',
                     sortable: true
                 },
+                {
+                    key: 'lienModification',
+                    label: 'Modification',
+                },
+                {
+                    key: 'id',
+                    label: 'Supprimer',
+                },
+
+                
             ],
             filter: null,
             nombreTypeProjet: null,
@@ -175,7 +201,7 @@ export default {
             else {
                 urlProjets = this.$store.state.baseUrlApi+'projets'
             }
-            console.log('url projet :' + urlProjets);
+    
             // Récuperation restapi des projets
             axios
             .get(urlProjets, {
@@ -186,6 +212,8 @@ export default {
             })
             .then(reponse => {
                 this.items = reponse.data
+                this.ajouterLienModificationProjet()
+
             })
         },
         reqNombreProjets : function() {
@@ -207,6 +235,27 @@ export default {
             }
             this.nombreTypeProjet = tableauNombreProjet
         },
+        ajouterLienModificationProjet() {
+            this.items.forEach(objProjet => {
+                objProjet['lienModification'] = `/projet/${objProjet.id}`
+            })
+        },
+        supprimerProjet(objProjet) {
+            if (confirm(`Voulez-vous supprimer le projet "${objProjet.item.Nom}" ?`)) {
+                let urlRequete = `${this.$store.state.baseUrlApi}projets/${objProjet.item.id}`
+                axios
+                .delete(urlRequete, {
+                    headers: {
+                        Authorization:
+                        `Bearer ${this.$store.state.user.jwt}`,
+                    },
+                })
+                .catch(error => console.log(error))
+                .then(
+                    this.majProjets()
+                )
+            }
+        }    
     },
 
     created () {
@@ -236,6 +285,14 @@ export default {
 #tableau {
     background-color: #ffffff;
     border-radius: 3px;
+}
+#edit {
+    background-color: #318fb5;
+    justify-content: center;
+}
+#delete {
+    background-color: #b83b5e;
+    justify-content: center;
 }
 .faire {
     background-color: #b83b5e;

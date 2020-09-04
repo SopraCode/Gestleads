@@ -30,7 +30,7 @@
                 <b-form-input
                     id="input-client"
                     list="listClient"
-                    v-model="form.client"
+                    v-model="form.clientSansTraitement"
                     :state="validationClient"
                 ></b-form-input>
                 <b-form-invalid-feedback :state="validationClient">
@@ -145,7 +145,7 @@
             
             <!-- Type d'affaire -->
             <b-form-group label="Type d'affaire">
-                <b-form-tags v-model="form.typeDaffaire" no-outer-focus>
+                <b-form-tags v-model="form.typeDaffaireSansTraitement" no-outer-focus>
                     <template v-slot="{ tags, disabled, addTag, removeTag }">
                     <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
                         <li v-for="tag in tags" :key="tag" class="list-inline-item">
@@ -232,6 +232,7 @@ export default {
         return {
             form: {
                 nom: '',
+                clientSansTraitement: '',
                 client: '',
                 descriptif: '',
                 etatProjet: '',
@@ -242,6 +243,7 @@ export default {
                 numeroDeCommande: '',
                 marquesSansTraitement: [],
                 marques: null,
+                typeDaffaireSansTraitement: [],
                 typeDaffaire: [],
                 commentaires: null,
                 marche: false,
@@ -264,6 +266,7 @@ export default {
     methods: {
         resetForm() {
             this.form.nom = ''
+            this.form.clientSansTraitement = ''
             this.form.client = ''
             this.form.descriptif = ''
             this.form.etatProjet = ''
@@ -272,6 +275,7 @@ export default {
             this.form.chiffre = null
             this.form.marques = null
             this.form.marquesSansTraitement = []
+            this.form.typeDaffaireSansTraitement = []
             this.form.typeDaffaire = []
             this.form.marche = false
             this.form.marge = null
@@ -319,7 +323,7 @@ export default {
             // Type d'affaire
             if(traitementOk) {
                 try {
-                    const idTypeDaffaire = this.form.typeDaffaire.map(type => this.option.typeDaffaire.indexOf(type) + 1)
+                    const idTypeDaffaire = this.form.typeDaffaireSansTraitement.map(type => this.option.typeDaffaire.indexOf(type) + 1)
                     this.form.typeDaffaire = idTypeDaffaire
                 } catch(error) {
                     console.log(error);
@@ -329,13 +333,13 @@ export default {
 
             // clients
             if (traitementOk) {
-                if (this.form.client.length == 0) {
+                if (this.form.clientSansTraitement.length == 0) {
                     alert("Merci de choisir un client, champ obligatoire")
                     traitementOk = false
                 }
                 else {
                     try {
-                        let objClient = await this.findClient(this.form.client)
+                        let objClient = await this.findClient(this.form.clientSansTraitement)
                         if (objClient.length == 1) {
                             this.form.client = [objClient[0].id]
                         }
@@ -354,12 +358,23 @@ export default {
             
             // Envoyer
             if(traitementOk) {
-                try {
-                    this.envoyerForm()
-                } catch(error) {
-                    console.log(error);
-                    alert("Erreur lors de l'envoie du formulaire")
+                if (this.$route.params.id) {
+                    // Si en mode modification de projet
+                    try {
+                        this.modifierForm()
+                    } catch(error) {
+                        console.log(error);
+                        alert("Erreur lors de l'envoie du formulaire")
+                    }
+                } else {
+                    try {
+                        this.envoyerForm()
+                    } catch(error) {
+                        console.log(error);
+                        alert("Erreur lors de l'envoie du formulaire")
+                    }
                 }
+                
             }
             else {alert("Erreur de traitement du formulaire")}
                 
@@ -395,6 +410,37 @@ export default {
                 alert("Erreur avec la BDD lors de l'envoi du formulaire")
             })
         },
+        async modifierForm () {
+            // requete
+            axios
+            .put(`http://localhost:1337/projets/${this.idModificationProjet}`,
+            {
+              Nom: this.form.nom,
+              client: this.form.client,
+              DescriptifDuProjet: this.form.descriptif,
+              etatprojet: this.form.etatProjet,
+              Priorite: this.form.priorite,
+              DateDeRelance: this.form.dateRelance,
+              Chiffre: this.form.chiffre,
+              Marques: this.form.marques,
+              type_daffaires: this.form.typeDaffaireSansTraitement,
+              marche: this.form.marche,
+              marge: this.form.marge,
+            }
+            , {
+                headers: {
+                    Authorization:
+                    `Bearer ${this.$store.state.user.jwt}`,
+                },
+            })
+            .then(
+                console.log('Modification ok')
+            )
+            .catch(function (error) {
+                console.log(error);
+                alert("Erreur avec la BDD lors de l'envoi du formulaire")
+            })
+        },
         affaireOptionTag({ option, addTag }) {
             addTag(option)
             this.search = ''
@@ -402,7 +448,7 @@ export default {
         async chargementModifProjet() {
             let objProjet = await this.getDonnees(`projets/${this.idModificationProjet}`)
             this.form.nom = objProjet.Nom
-            this.form.client = objProjet.client.Nom
+            this.form.clientSansTraitement = objProjet.client.Nom
             this.form.descriptif = objProjet.DescriptifDuProjet
             this.form.etatProjet = objProjet.etatprojet.id
             this.form.priorite = objProjet.Priorite
@@ -413,16 +459,20 @@ export default {
             this.form.commentaires = objProjet.commentaires
             this.form.marche = objProjet.marche
             this.form.marge = objProjet.marge
-            this.form.marquesSansTraitement =  objProjet.Marques.split('/')
+
+            //marques
+            if (objProjet.Marques) {
+                this.form.marquesSansTraitement = objProjet.Marques.split('/')
+            }
+             
+            
             this.chargementTypeDaffaire(objProjet.type_daffaires)
             
         },
-
-        ////// PROBLEME DE CHARGEMENT DU COMPOSANT
         chargementTypeDaffaire(listTypeDaffaire) {
             // if vide à rajouter
             listTypeDaffaire.forEach(affaire => {
-                this.form.typeDaffaire.push(affaire.Domaine)
+                this.form.typeDaffaireSansTraitement.push(affaire.Domaine)
             })
         }
 
@@ -451,7 +501,7 @@ export default {
             return this.form.nom.length > 3 && this.form.nom.length < 50
         },
         validationClient() {
-            return this.form.client != ''
+            return this.form.clientSansTraitement != ''
         },
         validationEtat() {
             return this.form.etatProjet != ""
@@ -481,7 +531,7 @@ export default {
     },
     watch: {
         '$route' (to) {
-            // réagir au changement de route..
+            // réagir au changement de route sur un nouveau projet
             if (to.path == "/projet") {
                 this.resetForm()
             }
