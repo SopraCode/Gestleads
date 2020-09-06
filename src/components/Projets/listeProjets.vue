@@ -4,28 +4,28 @@
         <div class="row">
             <div class="col-3">
                 <router-link to="/projets/a_faire" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #b83b5e;" typeDeProjet="A faire" rechercheReqEtat="a_faire" icone="tasks"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #b83b5e;" typeDeProjet="A faire" :nombreProjets="nombreTypeProjet.a_faire" icone="tasks"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
                 <router-link to="/projets/en_attente" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #e97171;" typeDeProjet="En attente" rechercheReqEtat="en_attente" icone="clock"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #e97171;" typeDeProjet="En attente" :nombreProjets="nombreTypeProjet.en_attente" icone="clock"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
                 <router-link to="/projets/a_relancer" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #3fc1c9;" typeDeProjet="A relancer" rechercheReqEtat="a_relancer" icone="phone"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #3fc1c9;" typeDeProjet="A relancer" :nombreProjets="nombreTypeProjet.a_relancer" icone="phone"></badgeTypeProjet>
                 </router-link>
             </div>
             <div class="col-3">
                 <router-link to="/projets/gagne" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" rechercheReqEtat="perdu&etatprojet.etat=gagne" icone="folder-open"></badgeTypeProjet>
+                    <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" :nombreProjets="nombreTypeProjet.perdu + nombreTypeProjet.gagne" icone="folder-open"></badgeTypeProjet>
                 </router-link>
             </div>
         </div>
 
         <!-- composant tableau  -->
-        <div id="tableau" class="mx-1 my-3 p-3">
+     <div id="tableau" class="mx-1 my-3 p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div><h1>Projets</h1></div>
                 <div class="ml-auto mr-3">
@@ -76,7 +76,7 @@
             </b-list-group>
 
             <!-- Table -->
-            <b-table striped hover responsive :items="items" :fields="enTete" :filter="filter">
+            <b-table striped hover responsive :items="items" :fields="enTete" :filter="filter" ref="table">
                 <template v-slot:cell(client)="data">
                     <div v-if="data.item.client">{{ data.item.client.Nom }}</div>
                 </template>
@@ -143,7 +143,7 @@ export default {
                 },
                 {
                     key: 'Priorite',
-                    label: 'Priorité',
+                    label: 'Prio',
                     sortable: true,
                 },
                 {
@@ -155,11 +155,11 @@ export default {
                     label: 'Relance',
                     sortable: true
                 },
-                {
-                    key: 'DescriptifDuProjet',
-                    label: 'Descriptif',
-                    sortable: true
-                },
+                // {
+                //     key: 'DescriptifDuProjet',
+                //     label: 'Descriptif',
+                //     sortable: true
+                // },
                 {
                     key: 'created_at',
                     label: "Créé le",
@@ -177,17 +177,23 @@ export default {
                 },
                 {
                     key: 'lienModification',
-                    label: 'Modification',
+                    label: 'Modif.',
                 },
                 {
                     key: 'id',
-                    label: 'Supprimer',
+                    label: 'Sup.',
                 },
 
                 
             ],
             filter: null,
-            nombreTypeProjet: null,
+            nombreTypeProjet: {
+                'a_faire' : 0,
+                'en_attente' : 0,
+                'a_relancer' : 0,
+                'gagne' : 0,
+                'perdu' : 0,
+            },
         }
     },
 
@@ -213,12 +219,13 @@ export default {
             .then(reponse => {
                 this.items = reponse.data
                 this.ajouterLienModificationProjet()
-
+                this.reqNombreProjets()
             })
+            
+            
         },
         reqNombreProjets : function() {
             const typesProjet = ['a_faire', 'en_attente', 'a_relancer', 'gagne', 'perdu']
-            let tableauNombreProjet = {}
             for (let type of typesProjet) {
                 // constitution de l'url pour la requete
                 const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${type}`
@@ -230,10 +237,9 @@ export default {
                     },
                 })
                 .then(reponse => {
-                    tableauNombreProjet[type] = reponse.data
+                    this.nombreTypeProjet[type] = reponse.data
                 })
             }
-            this.nombreTypeProjet = tableauNombreProjet
         },
         ajouterLienModificationProjet() {
             this.items.forEach(objProjet => {
@@ -252,14 +258,16 @@ export default {
                 })
                 .catch(error => console.log(error))
                 .then(
-                    this.majProjets()
+                    setTimeout(this.majProjets, 500),
                 )
             }
-        }    
+        },
+        maj() {
+            this.majProjets()
+        },
     },
 
     created () {
-        this.reqNombreProjets();
         this.majProjets();
     },
     

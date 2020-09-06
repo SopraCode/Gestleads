@@ -17,7 +17,7 @@ export default {
     name: 'badgeTypeProjet',
     data() {
         return {
-            nombreProjets: null,
+            
         }
     },
     methods: {
@@ -32,7 +32,7 @@ export default {
             type: String,
             default: 'default'
         },
-        rechercheReqEtat:{
+        nombreProjets:{
             type: String,
             default: '0?'
         },
