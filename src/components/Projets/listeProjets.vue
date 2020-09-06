@@ -30,6 +30,7 @@
                 <div><h1>Projets</h1></div>
                 <div class="ml-auto mr-3">
                     <b-button variant="outline-info" to="/projet"><font-awesome-icon icon="plus-circle" size="lg"/> Ajouter</b-button>
+                    <b-button variant="outline-info" v-b-modal.modal-1><font-awesome-icon icon="plus-circle" size="lg"/> Ajouter en modal</b-button>
                 </div>
             </div>
             
@@ -112,6 +113,9 @@
                 
             </b-table>
         </div>
+        <b-modal id="modal-1" title="Projet" hide-footer>
+            <nouveauProjet />
+        </b-modal>
     </div>
 </template>
 
@@ -121,12 +125,14 @@ import axios from 'axios'
 import moment from 'moment'
 
 import badgeTypeProjet from './badgeTypeProjet'
+import nouveauProjet from './projet'
 
 export default {
     name: 'Projets',
 
     components : {
         'badgeTypeProjet': badgeTypeProjet,
+        'nouveauProjet': nouveauProjet,
     },
 
     data() {
