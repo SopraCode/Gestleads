@@ -33,8 +33,8 @@ export default {
             default: 'default'
         },
         nombreProjets:{
-            type: String,
-            default: '0?'
+            type: Number,
+            default: 0
         },
         icone:{
             type: String,

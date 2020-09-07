@@ -211,10 +211,50 @@
                     unchecked-value="false"
                 ></b-form-checkbox>
             </b-form-group>
+            <div class="mb-5">
+                <b-button @click="traitementForm" variant="primary" class="m-1">Envoyer</b-button>
+                <b-button @click="resetForm" variant="danger" class="m-1">Reset</b-button>
+            </div>
+            
 
+            <div v-if="idModificationProjet">
+                <h3>Commentaires</h3>
 
-            <b-button @click="traitementForm" variant="primary" class="m-1">Envoyer</b-button>
-            <b-button @click="resetForm" variant="danger" class="m-1">Reset</b-button>
+                <!-- Commentaires -->
+                <div id="commentaires" v-if="form.commentaires">
+                    <b-card footer-tag="footer" v-for="commentaire in form.commentaires" :key="commentaire.id" class="mb-3">
+                        <b-media>
+                            <template v-slot:aside>
+                                <b-avatar size="4em"></b-avatar>
+                            </template>
+                            <p>{{ commentaire.Commentaire }}</p>
+                        </b-media>
+                        <template v-slot:footer>
+                            <em>Par {{ commentaire.user.username }} le {{ commentaire.created_at | formatDate }}</em>
+                        </template>
+                    </b-card>
+                </div>
+                
+
+                <!-- Nouveau commentaire -->
+                <b-form-group
+                    id="input-group-commentaire"
+                    label="Nouveau commentaire"
+                    label-for="input-commentaire"
+                >
+                    <b-form-textarea
+                        id="input-commentaire"
+                        v-model="form.nouveauCommentaire"
+                        placeholder="Ajouter un commentaire ..."
+                        rows="3"
+                        max-rows="6"
+                    ></b-form-textarea>
+                    <b-button @click="envoyerCommentaire" variant="primary" class="mt-2">Ajouter commentaire</b-button>
+                </b-form-group>
+
+                
+                
+            </div>
         </b-form>
     </div>
 </template>
@@ -223,6 +263,7 @@
 
 <script>
 import axios from 'axios'
+import moment from 'moment'
 
 
 export default {
@@ -245,9 +286,10 @@ export default {
                 marques: null,
                 typeDaffaireSansTraitement: [],
                 typeDaffaire: [],
-                commentaires: null,
                 marche: false,
                 marge: null,
+                nouveauCommentaire: null,
+                commentaires: null,
             },
             option: {
                 clients: {},
@@ -374,7 +416,6 @@ export default {
                         alert("Erreur lors de l'envoie du formulaire")
                     }
                 }
-                
             }
             else {alert("Erreur de traitement du formulaire")}
                 
@@ -395,6 +436,7 @@ export default {
               type_daffaires: this.form.typeDaffaire,
               marche: this.form.marche,
               marge: this.form.marge,
+              users: this.$store.state.user.user.id,
             }
             , {
                 headers: {
@@ -474,8 +516,35 @@ export default {
             listTypeDaffaire.forEach(affaire => {
                 this.form.typeDaffaireSansTraitement.push(affaire.Domaine)
             })
+        },
+        envoyerCommentaire() {
+            // requete
+            axios
+            .post('http://localhost:1337/commentaires',
+            {
+              Commentaire: this.form.nouveauCommentaire,
+              projet: this.idModificationProjet,
+              user: this.$store.state.user.user.id,
+            }
+            , {
+                headers: {
+                    Authorization:
+                    `Bearer ${this.$store.state.user.jwt}`,
+                },
+            })
+            .then(
+                this.form.nouveauCommentaire = '',
+                this.chargerCommentaire()
+            )
+            .catch(function (error) {
+                console.log(error);
+                alert("Erreur avec la BDD lors de l'envoi du commentaire")
+            })
+        },
+        async chargerCommentaire() {
+            this.form.commentaires = await this.getDonnees(`commentaires?projet.id=${this.idModificationProjet}`)
+            
         }
-
     },
     created() {
         this.getDonnees('clients').then(clients => {
@@ -495,6 +564,8 @@ export default {
             this.idModificationProjet = this.$route.params.id
             this.chargementModifProjet()
         }
+
+        this.chargerCommentaire()
     },
     computed: {
         validationNomProjet() {
@@ -538,6 +609,12 @@ export default {
             
         },
     },
+    filters: {
+        formatDate: function (value) {
+            if (!value) return ''
+                return moment(String(value)).format('DD/MM/YYYY à HH:mm ')
+        }
+    }
 
 }
 </script>
