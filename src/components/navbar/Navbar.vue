@@ -4,9 +4,11 @@
 
         <li><router-link to="/" exact class="nav-link"><font-awesome-icon icon="home" size="lg"/><span class="ml-2">Dashboard</span></router-link></li>
 
-        <li><router-link to="/projet" exact class="nav-link"><font-awesome-icon icon="code" size="lg"/><span class="ml-2">Nouveau projet</span></router-link></li>
-
         <li><router-link to="/projets" exact class="nav-link"><font-awesome-icon icon="tasks" size="lg"/><span class="ml-2">Projets</span></router-link></li>
+
+        <li><router-link to="/projet" exact class="nav-link"><font-awesome-icon icon="plus-circle" size="lg"/><span class="ml-2">Nouveau projet</span></router-link></li>
+
+        <li><router-link to="/clients" exact class="nav-link"><font-awesome-icon icon="id-card" size="lg"/><span class="ml-2">Clients</span></router-link></li>
     </ul>
 </div>
 </template>

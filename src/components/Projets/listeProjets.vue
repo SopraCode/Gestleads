@@ -25,7 +25,7 @@
         </div>
 
         <!-- composant tableau  -->
-     <div id="tableau" class="mx-1 my-3 p-3">
+        <div id="tableau" class="mx-1 my-3 p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div><h1>Projets</h1></div>
                 <div class="ml-auto mr-3">
