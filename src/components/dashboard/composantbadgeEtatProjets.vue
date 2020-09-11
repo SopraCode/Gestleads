@@ -22,24 +22,20 @@ export default {
     },
     methods: {
         reqNombreProjets() {
-            const typesProjet = ['a_faire']
-            for (let type of typesProjet) {
-                // constitution de l'url pour la requete
-                const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${type}`
-                axios
-                .get(countEtatProjetUrl, {
-                    headers: {
-                        Authorization:
-                        `Bearer ${this.$store.state.user.jwt}`,
-                    },
-                })
-                .then(reponse => {
-                    this.nombreDeProjets = reponse.data
-                })
-            }
-
-        },
-      
+ 
+            // constitution de l'url pour la requete
+            const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${this.nombreProjets}`
+            axios
+            .get(countEtatProjetUrl, {
+                headers: {
+                    Authorization:
+                    `Bearer ${this.$store.state.user.jwt}`,
+                },
+            })
+            .then(reponse => {
+                this.nombreDeProjets = reponse.data
+            })
+        }
     },
     props: {
         addStyle:{
@@ -51,8 +47,7 @@ export default {
             default: 'default'
         },
         nombreProjets:{
-            type: Number,
-            default: 0
+            type: String,
         },
         icone:{
             type: String,

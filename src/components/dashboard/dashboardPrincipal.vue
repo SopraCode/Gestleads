@@ -1,6 +1,6 @@
 <template>
 <div>
-    <badgeEtatProjets @etatProjet="test" :prop="envoiProps" />
+    <badgeEtatProjets />
 </div>
 </template>
 
@@ -14,15 +14,10 @@ export default {
     },
     data() {
         return {
-            envoiProps: ''
+
         }
     },
     methods: {
-        test(nombreEtatProjet) {
-            console.log('test reussi')
-            console.log(nombreEtatProjet)
-            this.envoiProps = 'props envoyé'
-        }
     }
   
 }
