@@ -1,7 +1,7 @@
 <template>
     <div id="badgeProjet" class="p-2" v-bind:style="addStyle">
         <div class="row align-items-center">
-            <span id="nombre" class="pl-3"> <h5 class="m-0">{{ nombreProjets }}</h5> </span>
+            <span id="nombre" class="pl-3"> <h5 class="m-0">{{ nombreDeProjets }}</h5> </span>
             <span id="icone" class="ml-auto pr-3"><font-awesome-icon v-bind:icon="icone" /></span>
         </div>
         <div class="row mb-1 pt-2 justify-content-center" id="typeProjet">
@@ -17,10 +17,28 @@ export default {
     name: 'badgeTypeProjet',
     data() {
         return {
-            
+            nombreDeProjets: 0
         }
     },
     methods: {
+        reqNombreProjets() {
+            const typesProjet = ['a_faire']
+            for (let type of typesProjet) {
+                // constitution de l'url pour la requete
+                const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${type}`
+                axios
+                .get(countEtatProjetUrl, {
+                    headers: {
+                        Authorization:
+                        `Bearer ${this.$store.state.user.jwt}`,
+                    },
+                })
+                .then(reponse => {
+                    this.nombreDeProjets = reponse.data
+                })
+            }
+
+        },
       
     },
     props: {
@@ -42,7 +60,7 @@ export default {
         },
     },
     created() {
-
+        this.reqNombreProjets()
     },
     mounted() {
         const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${this.rechercheReqEtat}`

@@ -1,28 +1,5 @@
 <template>
     <div id="contenu-projet">
-        <!-- composant : choix du type de projet -->
-        <div class="row">
-            <div class="col-3">
-                <router-link to="/projets/a_faire" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #b83b5e;" typeDeProjet="A faire" :nombreProjets="nombreTypeProjet.a_faire" icone="tasks"></badgeTypeProjet>
-                </router-link>
-            </div>
-            <div class="col-3">
-                <router-link to="/projets/en_attente" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #e97171;" typeDeProjet="En attente" :nombreProjets="nombreTypeProjet.en_attente" icone="clock"></badgeTypeProjet>
-                </router-link>
-            </div>
-            <div class="col-3">
-                <router-link to="/projets/a_relancer" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #3fc1c9;" typeDeProjet="A relancer" :nombreProjets="nombreTypeProjet.a_relancer" icone="phone"></badgeTypeProjet>
-                </router-link>
-            </div>
-            <div class="col-3">
-                <router-link to="/projets/gagne" exact class="nav-link px-1">
-                    <badgeTypeProjet addStyle="background-color: #318fb5;" typeDeProjet="Solder" :nombreProjets="nombreTypeProjet.perdu + nombreTypeProjet.gagne" icone="folder-open"></badgeTypeProjet>
-                </router-link>
-            </div>
-        </div>
 
         <!-- composant tableau  -->
         <div id="tableau" class="mx-1 my-3 p-3">
@@ -124,14 +101,12 @@
 import axios from 'axios'
 import moment from 'moment'
 
-import badgeTypeProjet from './badgeTypeProjet'
 import nouveauProjet from './projet'
 
 export default {
     name: 'Projets',
 
     components : {
-        'badgeTypeProjet': badgeTypeProjet,
         'nouveauProjet': nouveauProjet,
     },
 
