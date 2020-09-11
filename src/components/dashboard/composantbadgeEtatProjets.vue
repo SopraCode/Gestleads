@@ -22,7 +22,6 @@ export default {
     },
     methods: {
         reqNombreProjets() {
- 
             // constitution de l'url pour la requete
             const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${this.nombreProjets}`
             axios
@@ -54,23 +53,9 @@ export default {
             default: 'tasks'
         },
     },
-    created() {
+    beforeMount() {
         this.reqNombreProjets()
     },
-    mounted() {
-        const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${this.rechercheReqEtat}`
-
-        axios
-        .get(countEtatProjetUrl, {
-            headers: {
-                Authorization:
-                `Bearer ${this.$store.state.user.jwt}`,
-            },
-        })
-        .then(reponse => {
-            this.nombreProjets = reponse.data
-        })
-    }
 }
 
 </script>
