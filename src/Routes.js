@@ -1,4 +1,4 @@
-import Test from './components/container/Test'
+import Dashboard from './components/dashboard/dashboardPrincipal'
 import Api from './components/Api'
 import Projets from './components/Projets/listeProjets'
 import Projet from './components/Projets/projet'
@@ -7,7 +7,7 @@ import Clients from './components/clients/listeClients'
 
 
 export default [
-    {path: '/', component: Test},
+    {path: '/', component: Dashboard},
     {path: '/api', component: Api},
     {path: '/projets', component: Projets},
     {path: '/projets/:type', component: Projets},

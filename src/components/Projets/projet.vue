@@ -1,5 +1,6 @@
 <template>
     <div>
+    <div id="projet" class="p-3">
         <h1 v-if="idModificationProjet">Modification du projet</h1>
         <h1 v-else>Nouveau projet</h1>
 
@@ -39,6 +40,19 @@
                 <datalist id="listClient">
                     <option v-for="client in option.clients" :key="client.id">{{ client.Nom }}</option>
                 </datalist>
+            </b-form-group>
+
+            <!-- Interlocuteur -->
+            <b-form-group
+                id="input-group-interlocuteur"
+                label="Interlocuteur"
+                label-for="input-interlocuteur"
+            >
+                <b-form-input
+                    id="input-interlocuteur"
+                    v-model="form.interlocuteur"
+                    placeholder="Jean Cérien"
+                ></b-form-input>
             </b-form-group>
 
             <!-- Descriptif -->
@@ -212,8 +226,19 @@
                 ></b-form-checkbox>
             </b-form-group>
             <div class="mb-5">
+                <b-alert
+                    class="mb-3"
+                    :show="popup.compteurPopup"
+                    dismissible
+                    fade
+                    variant="success"
+                    @dismiss-count-down="initCompteurPopup"
+                >
+                    Le projet "{{ popup.nomProjet }}" est bien enregistré ;)
+                </b-alert>
                 <b-button @click="traitementForm" variant="primary" class="m-1">Envoyer</b-button>
                 <b-button @click="resetForm" variant="danger" class="m-1">Reset</b-button>
+                
             </div>
             
 
@@ -256,6 +281,10 @@
                 
             </div>
         </b-form>
+        <b-modal id="modal-nouveauClient" ref="modal-nouveauClient" title="Client" hide-footer>
+            <nouveauClient :nomClient="this.form.clientSansTraitement" @formulaireEnvoyer="nouveauClient" />
+        </b-modal>
+    </div>
     </div>
 </template>
     
@@ -265,9 +294,14 @@
 import axios from 'axios'
 import moment from 'moment'
 
+import nouveauClient from './../clients/client'
 
 export default {
     name: 'nouveauProjet',
+
+    components : {
+        'nouveauClient': nouveauClient
+    },
 
     data () {
         return {
@@ -290,6 +324,7 @@ export default {
                 marge: null,
                 nouveauCommentaire: null,
                 commentaires: null,
+                interlocuteur: null,
             },
             option: {
                 clients: {},
@@ -303,6 +338,11 @@ export default {
                 search: ''
             },
             idModificationProjet: null,
+            popup: {
+                valeurInitCompteur: 5,
+                compteurPopup: 0,
+                nomProjet: '',
+            }
         }
     },
     methods: {
@@ -321,6 +361,8 @@ export default {
             this.form.typeDaffaire = []
             this.form.marche = false
             this.form.marge = null
+            this.form.interlocuteur = null
+
         },
         getDonnees(requete) {
             let urlRequete = this.$store.state.baseUrlApi + requete
@@ -387,7 +429,7 @@ export default {
                         }
                         else {
                             if(confirm("Ce client n'existe pas, voulez-vous le créer ?")) {
-                                alert('Création client')
+                                this.showModalClient()
                             }
                             traitementOk = false
                         }
@@ -417,7 +459,6 @@ export default {
                     }
                 }
             }
-            else {alert("Erreur de traitement du formulaire")}
                 
         },
         async envoyerForm() {
@@ -437,6 +478,7 @@ export default {
               marche: this.form.marche,
               marge: this.form.marge,
               users: this.$store.state.user.user.id,
+              interlocuteur: this.form.interlocuteur,
             }
             , {
                 headers: {
@@ -445,7 +487,8 @@ export default {
                 },
             })
             .then(
-                this.resetForm()
+                this.activerPopup(this.form.nom),
+                this.resetForm(),
             )
             .catch(function (error) {
                 console.log(error);
@@ -468,6 +511,8 @@ export default {
               type_daffaires: this.form.typeDaffaireSansTraitement,
               marche: this.form.marche,
               marge: this.form.marge,
+              interlocuteur: this.form.interlocuteur,
+
             }
             , {
                 headers: {
@@ -476,7 +521,8 @@ export default {
                 },
             })
             .then(
-                console.log('Modification ok')
+                console.log('Modification ok'),
+                this.activerPopup(this.form.nom),
             )
             .catch(function (error) {
                 console.log(error);
@@ -501,6 +547,7 @@ export default {
             this.form.commentaires = objProjet.commentaires
             this.form.marche = objProjet.marche
             this.form.marge = objProjet.marge
+            this.form.interlocuteur = objProjet.interlocuteur
 
             //marques
             if (objProjet.Marques) {
@@ -534,7 +581,7 @@ export default {
             })
             .then(
                 this.form.nouveauCommentaire = '',
-                this.chargerCommentaire()
+                this.chargerCommentaire(),
             )
             .catch(function (error) {
                 console.log(error);
@@ -543,13 +590,34 @@ export default {
         },
         async chargerCommentaire() {
             this.form.commentaires = await this.getDonnees(`commentaires?projet.id=${this.idModificationProjet}`)
-            
-        }
-    },
-    created() {
-        this.getDonnees('clients').then(clients => {
+        },
+        showModalClient() {
+            this.$refs['modal-nouveauClient'].show()
+        },
+        hideModalClient() {
+            this.$refs['modal-nouveauClient'].hide()
+        },
+        listClient() {
+            this.getDonnees('clients').then(clients => {
             this.option.clients = clients
         })
+        },
+        nouveauClient(nomClient) {
+            this.hideModalClient()
+            this.listClient() //maj list client
+            this.form.clientSansTraitement = nomClient
+        },
+        initCompteurPopup(compteurPopup) {
+            this.popup.compteurPopup = compteurPopup
+        },
+        activerPopup(nomProjet) {
+            this.popup.nomProjet = nomProjet
+            this.popup.compteurPopup = this.popup.valeurInitCompteur
+        }
+    },
+    
+    created() {
+        this.listClient()
         this.getDonnees('etatprojets').then(etats => {
             this.option.etatProjet = etats
         })
@@ -564,7 +632,6 @@ export default {
             this.idModificationProjet = this.$route.params.id
             this.chargementModifProjet()
         }
-
         this.chargerCommentaire()
     },
     computed: {
@@ -619,6 +686,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+#projet {
+    background-color: #ffffff;
+    border-radius: 3px;
+}
 </style>

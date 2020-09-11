@@ -78,6 +78,7 @@ export default {
                 domaine: [],
             },
             idModificationClient: null,
+
         }
     },
     methods: {
@@ -152,8 +153,8 @@ export default {
                 },
             })
             .then(
+                this.$emit('formulaireEnvoyer', this.form.nom),
                 this.resetForm(),
-                console.log('formulaire envoyé')
             )
             .catch(function (error) {
                 console.log(error);
@@ -211,6 +212,10 @@ export default {
             this.idModificationClient = this.$route.params.id
             this.chargementModifClient()
         }
+        if (this.nomClient) {
+            this.form.nom = this.nomClient
+        }
+        
     },
     computed: {
         validationNomClient() {
@@ -226,6 +231,7 @@ export default {
             
         },
     },
+    props: ['nomClient']
 }
 </script>
 
