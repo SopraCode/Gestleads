@@ -54,7 +54,4 @@ export default {
 
 <style>
 
-.test {
-    background-color: #c97105
-}
 </style>
