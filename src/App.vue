@@ -32,11 +32,23 @@ export default {
       
     }
   },
+  beforMounted() {
+    console.log(localStorage.jwt);
+    if(localStorage.jwt) {
+      this.$store.dispatch('getUserMe', {
+        jwt: localStorage.jwt,
+      })
+    }
+  },
   computed: {
     isAuthentified() {
       return this.$store.state.isAuthentified
     }
   },
+  methods: {
+    
+    
+  }
   
 }
 </script>
