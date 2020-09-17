@@ -31,6 +31,19 @@ const router = new VueRouter({
   mode: 'history'
 })
 
+router.beforeEach((to, from, next) => {
+  // redirect to login page if not logged in and trying to access a restricted page
+  const publicPages = ['/connexion'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = store.state.isAuthentified;
+
+  if (authRequired && !loggedIn) {
+    return next('/connexion');
+  }
+
+  next();
+})
+
 new Vue({
   render: h => h(App),
   store,

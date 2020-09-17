@@ -4,6 +4,7 @@ import Projets from './components/Projets/listeProjets'
 import Projet from './components/Projets/projet'
 import Client from './components/clients/client'
 import Clients from './components/clients/listeClients'
+import Connexion from './components/Connexion.vue'
 
 
 export default [
@@ -16,4 +17,5 @@ export default [
     {path: '/client', component: Client},
     {path: '/client/:id', component: Client},
     {path: '/clients', component: Clients},
+    {path: '/connexion', component: Connexion},
 ]

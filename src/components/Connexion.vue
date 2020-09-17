@@ -37,10 +37,10 @@ export default {
     },
     methods: {
         poster: function () {
-            this.$store.dispatch('getUser', {
+            this.$store.dispatch('getUserAuth', {
                 login: this.login,
                 mdp : this.motDePasse
-                });
+            })
         },
     },
     computed: {
