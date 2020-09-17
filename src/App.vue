@@ -7,6 +7,7 @@
         <router-view id="contenu-router"></router-view>
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -27,10 +28,14 @@ export default {
       
     }
   },
-  mounted() {
-
+  beforMounted() {
+    console.log(localStorage.jwt);
+    if(localStorage.jwt) {
+      this.$store.dispatch('getUserMe', {
+        jwt: localStorage.jwt,
+      })
+    }
   },
-
   computed: {
     isAuthentified() {
       return this.$store.state.isAuthentified
