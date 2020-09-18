@@ -28,7 +28,7 @@ export default {
       
     }
   },
-  beforMounted() {
+  mounted() {
     console.log(localStorage.jwt);
     if(localStorage.jwt) {
       this.$store.dispatch('getUserMe', {
@@ -36,9 +36,15 @@ export default {
       })
     }
   },
+
   computed: {
     isAuthentified() {
       return this.$store.state.isAuthentified
+    }
+  },
+  watch: {
+    '$store.state.isAuthentified'() {
+      this.$router.push({path: '/'})
     }
   },
   methods: {

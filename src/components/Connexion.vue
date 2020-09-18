@@ -47,7 +47,16 @@ export default {
         user() {
             return this.$store.state.user
         }
-    }
+    },
+    watch: {
+        '$route' (to) {
+            // réagir au changement de route sur un nouveau projet
+            if (to.path == "/clients") {
+                this.resetForm()
+            }
+            
+        },
+    },
 }
 
 </script>

@@ -10,7 +10,7 @@
 
     <div class="navbar" >
       <ul class="navbar-nav pr-5">
-        <li class="nav-item">
+        <li class="nav-item" v-if="nomDutilisateur">
           <a class="nav-link" href="#"><span class="mr-3">{{ userName }}</span><font-awesome-icon icon="user" size="lg"/></a>
         </li>
       </ul>
@@ -25,6 +25,12 @@
 <script>
 export default {
   name: 'Header',
+
+  data() {
+    return {
+      nomDutilisateur: null,
+    }
+  },
 
   computed: {
         userName() {

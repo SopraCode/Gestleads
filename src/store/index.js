@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null,
+    user: {},
     isAuthentified: false,
     baseUrlApi: 'http://localhost:1337/',
   },
@@ -31,7 +31,7 @@ export default new Vuex.Store({
         password: obj.mdp,
       })
       .then(response => {
-        console.log('Authentification réussi ;)');
+        console.log('Authentification réussi avec login + mdp ;)');
         context.commit("setUser", response.data)
         context.commit("setIsAuthentified", true)
         
@@ -50,16 +50,21 @@ export default new Vuex.Store({
         },
       })
       .then(reponse => {
+        context.commit("setIsAuthentified", true),
+        console.log('test userme'),
         console.log(reponse.data),
-        context.commit("setUser", reponse.data),
-        context.commit("setIsAuthentified", true)
+        context.commit("setUser", {
+          jwt: obj.jwt,
+          user: reponse.data
+        })
       })
       .catch(error => {
-        console.log('Erreur de JWT', error.response);
+        console.log('Erreur de JWT', {user:error.response});
       })
     },
   },
 
   modules: {
+    
   }
 })
