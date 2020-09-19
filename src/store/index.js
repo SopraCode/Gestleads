@@ -6,7 +6,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: {},
+    user: {
+      jwt: {},
+      user: {username:''}
+    },
     isAuthentified: false,
     baseUrlApi: 'http://localhost:1337/',
   },
