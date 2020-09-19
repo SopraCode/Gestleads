@@ -11,7 +11,7 @@ export default new Vuex.Store({
       user: {username:''}
     },
     isAuthentified: false,
-    baseUrlApi: 'http://localhost:1337/',
+    baseUrlApi: 'https://dashboard.heroku.com/apps/frozen-brook-28380/',
   },
 
   mutations: {
