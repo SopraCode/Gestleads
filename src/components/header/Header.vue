@@ -11,7 +11,7 @@
     <div class="navbar" >
       <ul class="navbar-nav pr-5">
         <li class="nav-item">
-          <a class="nav-link" href="#"><span class="mr-3">{{ userName }}</span><font-awesome-icon icon="user" size="lg"/></a>
+          <a class="nav-link" href="#"><span class="mr-3">{{ userName || '' }}</span><font-awesome-icon icon="user" size="lg"/></a>
         </li>
       </ul>
     </div>
@@ -26,11 +26,18 @@
 export default {
   name: 'Header',
 
-  computed: {
-        userName() {
-            return this.$store.state.user.user.username
-        }
+  data() {
+    return {
+      nomDutilisateur: null,
     }
+  },
+
+  computed: {
+    userName() {
+      if (this.$store.state.user.user.username) {return this.$store.state.user.user.username}
+      else {return ''}
+    }
+  }
   
 }
 </script>

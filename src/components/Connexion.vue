@@ -37,17 +37,26 @@ export default {
     },
     methods: {
         poster: function () {
-            this.$store.dispatch('getUser', {
+            this.$store.dispatch('getUserAuth', {
                 login: this.login,
                 mdp : this.motDePasse
-                });
+            })
         },
     },
     computed: {
         user() {
             return this.$store.state.user
         }
-    }
+    },
+    watch: {
+        '$route' (to) {
+            // réagir au changement de route sur un nouveau projet
+            if (to.path == "/clients") {
+                this.resetForm()
+            }
+            
+        },
+    },
 }
 
 </script>
