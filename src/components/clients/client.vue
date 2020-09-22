@@ -140,7 +140,7 @@ export default {
         async envoyerForm() {
             // requete
             axios
-            .post('http://localhost:1337/clients',
+            .post(this.$store.state.baseUrlApi + 'clients',
             {
               Nom: this.form.nom,
               type_clients: this.form.type,
@@ -164,7 +164,7 @@ export default {
         async modifierForm () {
             // requete
             axios
-            .put(`http://localhost:1337/clients/${this.idModificationClient}`,
+            .put(`${this.$store.state.baseUrlApi}clients/${this.idModificationClient}`,
             {
               Nom: this.form.nom,
               type_clients: this.form.type,

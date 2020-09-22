@@ -11,7 +11,7 @@ export default new Vuex.Store({
       user: {username:''}
     },
     isAuthentified: false,
-    baseUrlApi: 'https://dashboard.heroku.com/apps/frozen-brook-28380/',
+    baseUrlApi: 'https://frozen-brook-28380.herokuapp.com/',
   },
 
   mutations: {
@@ -27,7 +27,7 @@ export default new Vuex.Store({
 
   actions: {
     getUserAuth(context, obj) {
-      let urlAuthentification = context.state.baseUrlApi + 'auth/local'
+      let urlAuthentification = context.state.baseUrlApi + 'auth/local/'
       Axios
       .post(urlAuthentification, {
         identifier: obj.login,
@@ -54,8 +54,6 @@ export default new Vuex.Store({
       })
       .then(reponse => {
         context.commit("setIsAuthentified", true),
-        console.log('test userme'),
-        console.log(reponse.data),
         context.commit("setUser", {
           jwt: obj.jwt,
           user: reponse.data

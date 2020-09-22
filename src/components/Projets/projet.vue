@@ -464,10 +464,10 @@ export default {
         async envoyerForm() {
             // requete
             axios
-            .post('http://localhost:1337/projets',
+            .post(this.$store.state.baseUrlApi + 'projets',
             {
               Nom: this.form.nom,
-              client: this.form.client,
+              client: this.form.client[0],
               DescriptifDuProjet: this.form.descriptif,
               etatprojet: this.form.etatProjet,
               Priorite: this.form.priorite,
@@ -497,11 +497,9 @@ export default {
         },
         async modifierForm () {
             // requete
-            axios
-            .put(`http://localhost:1337/projets/${this.idModificationProjet}`,
-            {
+            const objForm = {
               Nom: this.form.nom,
-              client: this.form.client,
+              client: this.form.client[0],
               DescriptifDuProjet: this.form.descriptif,
               etatprojet: this.form.etatProjet,
               Priorite: this.form.priorite,
@@ -512,8 +510,11 @@ export default {
               marche: this.form.marche,
               marge: this.form.marge,
               interlocuteur: this.form.interlocuteur,
-
             }
+            console.log(objForm);
+            axios
+            .put(`${this.$store.state.baseUrlApi}projets/${this.idModificationProjet}`,
+            objForm
             , {
                 headers: {
                     Authorization:
@@ -549,6 +550,8 @@ export default {
             this.form.marge = objProjet.marge
             this.form.interlocuteur = objProjet.interlocuteur
 
+            console.log(objProjet)
+
             //marques
             if (objProjet.Marques) {
                 this.form.marquesSansTraitement = objProjet.Marques.split('/')
@@ -567,7 +570,7 @@ export default {
         envoyerCommentaire() {
             // requete
             axios
-            .post('http://localhost:1337/commentaires',
+            .post(this.$store.state.baseUrlApi+'commentaires',
             {
               Commentaire: this.form.nouveauCommentaire,
               projet: this.idModificationProjet,
