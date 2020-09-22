@@ -397,7 +397,6 @@ export default {
                 try {
                     let marques = this.form.marquesSansTraitement.map(marque => marque.charAt(0).toUpperCase() + marque.slice(1))
                     this.form.marques = marques.join(' / ')
-                    console.log(this.form.marques);
                 } catch(error) {
                     console.log(error);
                     alert("Erreur lors du traitement de la marque")
@@ -407,8 +406,9 @@ export default {
             // Type d'affaire
             if(traitementOk) {
                 try {
-                    const idTypeDaffaire = this.form.typeDaffaireSansTraitement.map(type => this.option.typeDaffaire.indexOf(type) + 1)
+                    const idTypeDaffaire = this.form.typeDaffaireSansTraitement.map(type => this.option.typeDaffaire.indexOf(type) + 1) 
                     this.form.typeDaffaire = idTypeDaffaire
+                    console.log('typedaffaire : ' + this.form.typeDaffaire);
                 } catch(error) {
                     console.log(error);
                     alert("Erreur lors du traitement du type d'affaire")
@@ -497,6 +497,7 @@ export default {
         },
         async modifierForm () {
             // requete
+
             const objForm = {
               Nom: this.form.nom,
               client: this.form.client[0],
@@ -506,12 +507,12 @@ export default {
               DateDeRelance: this.form.dateRelance,
               Chiffre: this.form.chiffre,
               Marques: this.form.marques,
-              type_daffaires: this.form.typeDaffaireSansTraitement,
+              type_daffaires: this.form.typeDaffaire,
               marche: this.form.marche,
               marge: this.form.marge,
               interlocuteur: this.form.interlocuteur,
             }
-            console.log(objForm);
+
             axios
             .put(`${this.$store.state.baseUrlApi}projets/${this.idModificationProjet}`,
             objForm
