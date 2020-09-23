@@ -16,10 +16,6 @@
             </div>
         </form>
         <div class="btn btn-primary" v-on:click="poster" >Se connecter !</div>
-        <div class="mt-5" v-if="user">
-            <h1>Info utilisateur</h1>
-            <p>User: {{ user }}</p>
-        </div>
        
     </div>
 

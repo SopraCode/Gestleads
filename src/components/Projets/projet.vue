@@ -585,7 +585,7 @@ export default {
             })
             .then(
                 this.form.nouveauCommentaire = '',
-                this.chargerCommentaire(),
+                setTimeout(() => this.chargerCommentaire(), 1000)
             )
             .catch(function (error) {
                 console.log(error);
@@ -594,6 +594,9 @@ export default {
         },
         async chargerCommentaire() {
             this.form.commentaires = await this.getDonnees(`commentaires?projet.id=${this.idModificationProjet}`)
+            console.log('commentaire charger')
+            console.log(this.form.commentaires)
+
         },
         showModalClient() {
             this.$refs['modal-nouveauClient'].show()

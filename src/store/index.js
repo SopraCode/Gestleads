@@ -63,6 +63,17 @@ export default new Vuex.Store({
         console.log('Erreur de JWT', {user:error.response});
       })
     },
+    decoUser(context) {
+      context.commit("setIsAuthentified", false),
+      context.commit("setUser", {
+        jwt: null,
+        user: {
+          jwt: {},
+          user: {username:''}
+        },
+      })
+      localStorage.jwt = null
+    }
   },
 
   modules: {

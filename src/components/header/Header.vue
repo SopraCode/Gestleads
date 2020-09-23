@@ -4,14 +4,14 @@
   <img class="navbar-brand ml-4" id="logo" :src="require('../../assets/logo.png')">
 
   <div class="ml-auto d-flex">
-    <form class="form-inline mr-4">
-      <input class="form-control mr-sm-2" type="search" placeholder="Recherche" aria-label="Search">
-    </form>
 
     <div class="navbar" >
       <ul class="navbar-nav pr-5">
         <li class="nav-item">
-          <a class="nav-link" href="#"><span class="mr-3">{{ userName || '' }}</span><font-awesome-icon icon="user" size="lg"/></a>
+          <a class="nav-link" href="#"><span class="mr-3">{{ userName || '' }}</span></a>
+        </li>
+        <li class="nav-item">
+          <a v-if="$store.state.isAuthentified" class="nav-link" href="#" @click="deconnexion"><font-awesome-icon icon="user-slash" size="lg"/></a>
         </li>
       </ul>
     </div>
@@ -36,6 +36,12 @@ export default {
     userName() {
       if (this.$store.state.user.user.username) {return this.$store.state.user.user.username}
       else {return ''}
+    }
+  },
+
+  methods: {
+    deconnexion() {
+      this.$store.dispatch('decoUser',{})
     }
   }
   

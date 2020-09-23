@@ -10,7 +10,7 @@
 
         <li><router-link to="/clients" exact class="nav-link"><font-awesome-icon icon="id-card" size="lg"/><span class="ml-2">Clients</span></router-link></li>
 
-        <li><router-link to="/connexion" exact class="nav-link"><font-awesome-icon icon="id-card" size="lg"/><span class="ml-2">Connexion</span></router-link></li>
+        <!-- <li><router-link to="/connexion" exact class="nav-link"><font-awesome-icon icon="id-card" size="lg"/><span class="ml-2">Connexion</span></router-link></li> -->
     </ul>
 </div>
 </template>
