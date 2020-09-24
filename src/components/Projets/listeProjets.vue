@@ -54,7 +54,7 @@
             </b-list-group>
 
             <!-- Table -->
-            <b-table striped hover responsive :items="items" :fields="enTete" :filter="filter" ref="table">
+            <b-table striped hover responsive :items="items" :fields="enTete" :filter="filter" ref="table" :tbody-tr-class="rowClass">
                 <template v-slot:cell(client)="data">
                     <div v-if="data.item.client">{{ data.item.client.Nom }}</div>
                 </template>
@@ -134,7 +134,7 @@ export default {
                 {
                     key: 'DateDeRelance',
                     label: 'Relance',
-                    sortable: true
+                    sortable: true,
                 },
                 // {
                 //     key: 'DescriptifDuProjet',
@@ -202,8 +202,6 @@ export default {
                 this.ajouterLienModificationProjet()
                 this.reqNombreProjets()
             })
-            
-            
         },
         reqNombreProjets : function() {
             const typesProjet = ['a_faire', 'en_attente', 'a_relancer', 'gagne', 'perdu']
@@ -246,6 +244,13 @@ export default {
         maj() {
             this.majProjets()
         },
+        rowClass(item, type) {
+            if (!item || type !== 'row') return
+            const aujourdui = moment().format("YYYY-MM-DD")
+            if (moment(item.DateDeRelance).isBefore(aujourdui)) {
+                return 'table-danger'
+            }
+        }
     },
 
     created () {
