@@ -85,13 +85,15 @@ export default {
   #navbar {
     margin-top: 60px;
     padding-bottom: 5px;
-    min-height: 0;
+    min-height: 0px;
+    width: 100%;
   }
   #header {
 
   }
   #contenu {
     margin-top: 0;
+    width: 100%;
   }
 
   #connexion {
