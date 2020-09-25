@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="container-fluid">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <header-top class="row" id="header"></header-top>
     <div class="row">
       <Navbar class="col-12  col-md-3 col-lg-2" id="navbar"></Navbar>
@@ -89,7 +90,7 @@ export default {
     width: 100%;
   }
   #header {
-
+    width: 100%;
   }
   #contenu {
     margin-top: 0;
