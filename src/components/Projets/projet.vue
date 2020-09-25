@@ -408,7 +408,6 @@ export default {
                 try {
                     const idTypeDaffaire = this.form.typeDaffaireSansTraitement.map(type => this.option.typeDaffaire.indexOf(type) + 1) 
                     this.form.typeDaffaire = idTypeDaffaire
-                    console.log('typedaffaire : ' + this.form.typeDaffaire);
                 } catch(error) {
                     console.log(error);
                     alert("Erreur lors du traitement du type d'affaire")
@@ -523,7 +522,6 @@ export default {
                 },
             })
             .then(
-                console.log('Modification ok'),
                 this.activerPopup(this.form.nom),
             )
             .catch(function (error) {
@@ -550,8 +548,6 @@ export default {
             this.form.marche = objProjet.marche
             this.form.marge = objProjet.marge
             this.form.interlocuteur = objProjet.interlocuteur
-
-            console.log(objProjet)
 
             //marques
             if (objProjet.Marques) {
@@ -593,10 +589,9 @@ export default {
             })
         },
         async chargerCommentaire() {
-            this.form.commentaires = await this.getDonnees(`commentaires?projet.id=${this.idModificationProjet}`)
-            console.log('commentaire charger')
-            console.log(this.form.commentaires)
-
+            if (this.idModificationProjet) {
+                this.form.commentaires = await this.getDonnees(`commentaires?projet.id=${this.idModificationProjet}`)
+            }
         },
         showModalClient() {
             this.$refs['modal-nouveauClient'].show()
@@ -605,13 +600,13 @@ export default {
             this.$refs['modal-nouveauClient'].hide()
         },
         listClient() {
-            this.getDonnees('clients').then(clients => {
-            this.option.clients = clients
-        })
+            this.getDonnees('clients?_sort=Nom:ASC').then(clients => {
+                this.option.clients = clients
+            })
         },
         nouveauClient(nomClient) {
             this.hideModalClient()
-            this.listClient() //maj list client
+            setTimeout(this.listClient(), 1000) //maj list client
             this.form.clientSansTraitement = nomClient
         },
         initCompteurPopup(compteurPopup) {
@@ -625,7 +620,7 @@ export default {
     
     created() {
         this.listClient()
-        this.getDonnees('etatprojets').then(etats => {
+        this.getDonnees('etatprojets?_sort=etat:ASC').then(etats => {
             this.option.etatProjet = etats
         })
         this.getDonnees('type-daffaires').then(types => {
@@ -635,10 +630,12 @@ export default {
         })
 
         // Chargement modification d'un projet
-        if (this.$route.params.id) {
-            this.idModificationProjet = this.$route.params.id
-            this.chargementModifProjet()
-        }
+        try {
+            if (this.$route.params.id) {
+                this.idModificationProjet = this.$route.params.id
+                this.chargementModifProjet()
+            }
+        } catch(error) {console.log(error);}
         this.chargerCommentaire()
     },
     computed: {

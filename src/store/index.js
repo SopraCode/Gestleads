@@ -68,7 +68,7 @@ export default new Vuex.Store({
       context.commit("setUser", {
         jwt: null,
         user: {
-          jwt: {},
+          jwt: null,
           user: {username:''}
         },
       })

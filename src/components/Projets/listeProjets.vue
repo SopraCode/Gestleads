@@ -59,7 +59,7 @@
                     <div v-if="data.item.client">{{ data.item.client.Nom }}</div>
                 </template>
                 <template v-slot:cell(Chiffre)="data">
-                    {{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumSignificantDigits: 1 }).format(data.item.Chiffre) }}
+                    {{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }).format(data.item.Chiffre) }}
                 </template>
                 <template v-slot:cell(DateDeRelance)="data">
                     {{ data.item.DateDeRelance | formatDate}}
