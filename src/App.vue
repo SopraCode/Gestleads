@@ -60,24 +60,42 @@ export default {
 
 }
 #navbar {
-  margin-top: 75px;
+  margin-top: 100px;
   margin-left: 0px;
   margin-right: 0px;
   min-height: 100vh;
 }
 #header {
   position: fixed;
-  height: 75px;
+  height: 100px;
   z-index: 1;
   width: 100%;
+  top: 0px;
 }
 #contenu {
-  margin-top : 75px;
+  margin-top : 100px;
   background-color: var(--light-color2);
 }
 
 #connexion {
   margin-top : 30vh;
+}
+
+@media (max-width: 765px) {  
+  #navbar {
+    margin-top: 60px;
+    padding-bottom: 5px;
+    min-height: 0;
+  }
+  #header {
+
+  }
+  #contenu {
+    margin-top: 0;
+  }
+
+  #connexion {
+  }
 }
 
 @import './assets/variables.css';
