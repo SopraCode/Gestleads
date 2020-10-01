@@ -225,6 +225,23 @@
                     unchecked-value="false"
                 ></b-form-checkbox>
             </b-form-group>
+
+            <!-- Collaboration -->
+            <b-form-group
+                id="input-group-collaboration"
+                label="Collaborateur sur le projet"
+                label-for="input-collaboration"
+            >
+                <b-form-checkbox-group
+                    id="input-collaboration"
+                    v-model="form.usersIDcollaboration"
+                    :options="option.collaboration"
+                    value-field="id"
+                    text-field="username"
+                ></b-form-checkbox-group>
+            </b-form-group>
+
+
             <div class="mb-5">
                 <b-alert
                     class="mb-3"
@@ -240,7 +257,6 @@
                 <b-button @click="resetForm" variant="danger" class="m-1">Reset</b-button>
                 
             </div>
-            
 
             <div v-if="idModificationProjet">
                 <h3>Commentaires</h3>
@@ -325,6 +341,8 @@ export default {
                 nouveauCommentaire: null,
                 commentaires: null,
                 interlocuteur: null,
+                // collaboration: [],
+                usersIDcollaboration: [],
             },
             option: {
                 clients: {},
@@ -335,7 +353,8 @@ export default {
                     {priorite: 3, texte: '3 - basse'},
                 ],
                 typeDaffaire: [],
-                search: ''
+                search: '',
+                collaboration: null,
             },
             idModificationProjet: null,
             popup: {
@@ -438,6 +457,13 @@ export default {
                     }
                 }
             }
+
+            // Users
+            if(traitementOk) {
+                this.form.usersIDcollaboration.push(this.$store.state.user.user.id) //// rajouter les personnes supplémentaires
+                const uniqueId = new Set(this.form.usersIDcollaboration)
+                this.form.usersIDcollaboration = uniqueId
+            }
             
             // Envoyer
             if(traitementOk) {
@@ -476,7 +502,7 @@ export default {
               type_daffaires: this.form.typeDaffaire,
               marche: this.form.marche,
               marge: this.form.marge,
-              users: this.$store.state.user.user.id,
+              users: this.form.usersIDcollaboration,
               interlocuteur: this.form.interlocuteur,
             }
             , {
@@ -535,6 +561,7 @@ export default {
         },
         async chargementModifProjet() {
             let objProjet = await this.getDonnees(`projets/${this.idModificationProjet}`)
+            console.log(objProjet)
             this.form.nom = objProjet.Nom
             this.form.clientSansTraitement = objProjet.client.Nom
             this.form.descriptif = objProjet.DescriptifDuProjet
@@ -553,10 +580,15 @@ export default {
             if (objProjet.Marques) {
                 this.form.marquesSansTraitement = objProjet.Marques.split('/')
             }
-             
             
             this.chargementTypeDaffaire(objProjet.type_daffaires)
-            
+
+            // users collaboration
+            const userId = []
+            objProjet.users.forEach(user => {
+                userId.push(user.id)
+            })
+            this.form.usersIDcollaboration = userId
         },
         chargementTypeDaffaire(listTypeDaffaire) {
             // if vide à rajouter
@@ -615,6 +647,18 @@ export default {
         activerPopup(nomProjet) {
             this.popup.nomProjet = nomProjet
             this.popup.compteurPopup = this.popup.valeurInitCompteur
+        },
+        async chargerUsersOptions() {
+            const option = await this.getDonnees(`users`)
+            const accumulateur = []
+            // retirer user courant
+            option.forEach(user => {      
+                if (this.$store.state.user.user.id != user.id) {
+                    accumulateur.push(user)
+                }
+            })
+            this.option.collaboration = accumulateur
+
         }
     },
     
@@ -637,6 +681,7 @@ export default {
             }
         } catch(error) {console.log(error);}
         this.chargerCommentaire()
+        this.chargerUsersOptions()
     },
     computed: {
         validationNomProjet() {
