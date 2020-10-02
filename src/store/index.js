@@ -34,13 +34,14 @@ export default new Vuex.Store({
         password: obj.mdp,
       })
       .then(response => {
-        console.log('Authentification réussi avec login + mdp ;)');
+        console.log('Authentification réussi avec login + mdp ;)')
         context.commit("setUser", response.data)
         context.commit("setIsAuthentified", true)
         
       })
       .catch(error => {
-        console.log('Erreur de login mdp', error.response);
+        console.log('Erreur de login mdp', error.response),
+        alert("Erreur de login ou mot de passe")
       })
     },
     getUserMe(context, obj) {
