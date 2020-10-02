@@ -183,10 +183,10 @@ export default {
             // type de projet en fonction de l'url
             let urlProjets
             if (this.$route.params.type) {
-                urlProjets = this.$store.state.baseUrlApi + 'projets?etatprojet.etat=' + this.$route.params.type
+                urlProjets = this.$store.state.baseUrlApi + 'projets?etatprojet.etat=' + this.$route.params.type + '&users.id=' + this.$store.state.user.user.id
             }
             else {
-                urlProjets = this.$store.state.baseUrlApi+'projets'
+                urlProjets = this.$store.state.baseUrlApi+'projets?users.id=' + this.$store.state.user.user.id
             }
     
             // Récuperation restapi des projets
@@ -200,14 +200,14 @@ export default {
             .then(reponse => {
                 this.items = reponse.data
                 this.ajouterLienModificationProjet()
-                this.reqNombreProjets()
+                this.reqNombreProjets() 
             })
         },
         reqNombreProjets : function() {
             const typesProjet = ['a_faire', 'en_attente', 'a_relancer', 'gagne', 'perdu']
             for (let type of typesProjet) {
                 // constitution de l'url pour la requete
-                const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${type}`
+                const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${type}&users.id=${this.$store.state.user.user.id}`
                 axios
                 .get(countEtatProjetUrl, {
                     headers: {

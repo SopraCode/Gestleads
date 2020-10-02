@@ -23,7 +23,7 @@ export default {
     methods: {
         reqNombreProjets() {
             // constitution de l'url pour la requete
-            const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${this.nombreProjets}`
+            const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets/count?etatprojet.etat=${this.nombreProjets}&users.id=${this.$store.state.user.user.id}`
             axios
             .get(countEtatProjetUrl, {
                 headers: {

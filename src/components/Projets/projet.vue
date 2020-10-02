@@ -341,7 +341,6 @@ export default {
                 nouveauCommentaire: null,
                 commentaires: null,
                 interlocuteur: null,
-                // collaboration: [],
                 usersIDcollaboration: [],
             },
             option: {
@@ -461,7 +460,7 @@ export default {
             // Users
             if(traitementOk) {
                 this.form.usersIDcollaboration.push(this.$store.state.user.user.id) //// rajouter les personnes supplémentaires
-                const uniqueId = new Set(this.form.usersIDcollaboration)
+                const uniqueId = [... new Set(this.form.usersIDcollaboration)]
                 this.form.usersIDcollaboration = uniqueId
             }
             
@@ -488,6 +487,7 @@ export default {
         },
         async envoyerForm() {
             // requete
+            console.log(this.form.usersIDcollaboration)
             axios
             .post(this.$store.state.baseUrlApi + 'projets',
             {
@@ -536,6 +536,7 @@ export default {
               marche: this.form.marche,
               marge: this.form.marge,
               interlocuteur: this.form.interlocuteur,
+              users: this.form.usersIDcollaboration,
             }
 
             axios
