@@ -7,6 +7,9 @@
         <div class="row mb-1 pt-2 justify-content-center" id="typeProjet">
             <h4>{{ typeDeProjet }}</h4>
         </div>
+        <div class="row mb-1 pt-2 justify-content-center" id="sommeProjet">
+            <h5>{{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }).format(sommeProjet) }}</h5>
+        </div>
     </div>
 </template>
 
@@ -17,7 +20,9 @@ export default {
     name: 'badgeTypeProjet',
     data() {
         return {
-            nombreDeProjets: 0
+            nombreDeProjets: 0,
+            projets:{},
+            sommeProjet: "?",
         }
     },
     methods: {
@@ -34,6 +39,40 @@ export default {
             .then(reponse => {
                 this.nombreDeProjets = reponse.data
             })
+            .catch(function (error) {
+                console.log('Req nombres projets' + error);
+            })
+        },
+        reqProjets() {
+            // constitution de l'url pour la requete
+            const countEtatProjetUrl = `${this.$store.state.baseUrlApi}projets?etatprojet.etat=${this.nombreProjets}&users.id=${this.$store.state.user.user.id}`
+            axios
+            .get(countEtatProjetUrl, {
+                headers: {
+                    Authorization:
+                    `Bearer ${this.$store.state.user.jwt}`,
+                },
+            })
+            .then(reponse => {
+                this.projets = reponse.data
+                this.calculSommeProjets()
+            })
+            .catch(function (error) {
+                console.log('Req projets' + error);
+            })
+        },
+        calculSommeProjets() {
+            const total = this.projets.reduce(
+                function (accumulateur, projet) {
+                    let chiffre = 0
+                    if(projet.Chiffre){
+                        chiffre = parseInt(projet.Chiffre, 10)
+                    }
+                    return (accumulateur + chiffre); 
+                    }
+                    , 0
+            )
+            this.sommeProjet = total
         }
     },
     props: {
@@ -55,6 +94,7 @@ export default {
     },
     beforeMount() {
         this.reqNombreProjets()
+        this.reqProjets()
     },
 }
 
